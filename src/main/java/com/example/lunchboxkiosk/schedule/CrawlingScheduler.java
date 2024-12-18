@@ -20,18 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CrawlingScheduler {
 
+    private final HsdService hsdService;
+    private final ObjectMapper objectMapper;
+
     private static final String HSD_CRAWLER_SCRIPT = "hsd_crawler.py";
-    private final URL resourcesUrl;
+    private final URL resourcesUrl = getClass().getClassLoader().getResource("static/scripts");
 
-    public CrawlingScheduler() {
-        this.resourcesUrl = getClass().getClassLoader().getResource("static/scripts");
-        if (resourcesUrl == null) {
-            throw new RuntimeException("Resource path not found: static/scripts");
-        }
-    }
-
-    // @Scheduled(fixedRate = 5000)  // 5초마다 실행
-    @Scheduled(cron = "0 */10 * * * *")   // 10분마다 실행
+    // @Scheduled(fixedRate = 5000)         // 5초마다 실행
+    @Scheduled(cron = "0 */10 * * * *")     // 10분마다 실행
     // @Scheduled(cron = "0 0 10 * * *")    // 매일 오전 10시 실행
     public void hsdCrawling() {
         try {
@@ -45,22 +41,19 @@ public class CrawlingScheduler {
             BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder jsonOutput = new StringBuilder();
             String line;
-
             while ((line = outputReader.readLine()) != null) {
                 jsonOutput.append(line);
             }
 
             // JSON 데이터를 객체로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-
             List<HsdCategoryDto> categories = objectMapper.readValue(
                     jsonOutput.toString(),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, HsdCategoryDto.class)
             );
 
-            // 변환된 객체 출력
-            // categories.forEach(System.out::println);
+            hsdService.saveCategories(categories);
+            // hsdService.getCategories().forEach(System.out::println);
 
             // 에러 출력
             BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));

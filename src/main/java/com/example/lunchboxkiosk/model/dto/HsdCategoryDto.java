@@ -1,6 +1,7 @@
 package com.example.lunchboxkiosk.model.dto;
 
 import com.example.lunchboxkiosk.model.entity.HsdMenu;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HsdCategoryDto {
 
     private String name;

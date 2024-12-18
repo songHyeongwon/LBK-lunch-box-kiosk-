@@ -2,6 +2,7 @@ package com.example.lunchboxkiosk.model.entity;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -9,7 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HsdCategory {
+public class HsdCategory implements Serializable {
     private String name;
     private List<HsdCategory> subCategories;
     private List<HsdMenu> menus;
