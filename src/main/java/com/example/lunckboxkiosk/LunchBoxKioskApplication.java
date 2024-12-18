@@ -6,9 +6,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-public class LunckBoxKioskApplication {
+public class LunchBoxKioskApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LunckBoxKioskApplication.class, args);
+        SpringApplication.run(LunchBoxKioskApplication.class, args);
     }
 }

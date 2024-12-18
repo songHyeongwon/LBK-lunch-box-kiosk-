@@ -1,5 +1,8 @@
 package com.example.lunckboxkiosk.schedule;
 
+import com.example.lunckboxkiosk.model.dto.HsdCategoryDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -38,20 +42,36 @@ public class CrawlingScheduler {
 
             // 표준 출력 로그 읽기
             BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder jsonOutput = new StringBuilder();
             String line;
+
             while ((line = outputReader.readLine()) != null) {
-                System.out.println("[OUTPUT] " + line);
+                jsonOutput.append(line);
             }
 
-            // 표준 에러 로그 읽기
+            // JSON 데이터를 객체로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+            List<HsdCategoryDto> categories = objectMapper.readValue(
+                    jsonOutput.toString(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, HsdCategoryDto.class)
+            );
+
+            // 변환된 객체 출력
+            categories.forEach(System.out::println);
+
+            // 에러 출력
             BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = errorReader.readLine()) != null) {
                 System.err.println("[ERROR] " + line);
             }
 
             int exitCode = process.waitFor();
-            System.out.println("Exit code: " + exitCode);
-
+            if (exitCode != 0) {
+                throw new RuntimeException("HSD Crawler exited with code " + exitCode);
+            }
+            log.info("HSD Crawling success");
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
