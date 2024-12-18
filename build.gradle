@@ -24,11 +24,32 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//	+------------------------------------------------------------------------+
+//	| Web															         |
+//	+------------------------------------------------------------------------+
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+//	+------------------------------------------------------------------------+
+//	| Data														             |
+//	+------------------------------------------------------------------------+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
+
+//	+------------------------------------------------------------------------+
+//	| Security														         |
+//	+------------------------------------------------------------------------+
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+//	+------------------------------------------------------------------------+
+//	| Utils														             |
+//	+------------------------------------------------------------------------+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+//	+------------------------------------------------------------------------+
+//	| Test														             |
+//	+------------------------------------------------------------------------+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
