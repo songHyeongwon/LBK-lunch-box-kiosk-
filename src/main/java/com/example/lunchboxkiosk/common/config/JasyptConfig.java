@@ -1,4 +1,4 @@
-package com.example.lunckboxkiosk.common.config;
+package com.example.lunchboxkiosk.common.config;
 
 import org.jasypt.encryption.StringEncryptor;
 import org.jasypt.encryption.pbe.PooledPBEStringEncryptor;

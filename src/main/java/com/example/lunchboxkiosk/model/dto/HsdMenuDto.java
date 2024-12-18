@@ -1,6 +1,5 @@
-package com.example.lunckboxkiosk.model.dto;
+package com.example.lunchboxkiosk.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Data

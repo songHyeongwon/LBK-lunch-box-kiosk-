@@ -1,4 +1,4 @@
-package com.example.lunckboxkiosk;
+package com.example.lunchboxkiosk;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

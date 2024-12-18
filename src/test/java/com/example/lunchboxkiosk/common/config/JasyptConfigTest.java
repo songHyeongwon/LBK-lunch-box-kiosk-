@@ -1,4 +1,4 @@
-package com.example.lunckboxkiosk.common.config;
+package com.example.lunchboxkiosk.common.config;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.jupiter.api.Test;

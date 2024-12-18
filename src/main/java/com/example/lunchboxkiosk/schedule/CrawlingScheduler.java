@@ -1,6 +1,7 @@
-package com.example.lunckboxkiosk.schedule;
+package com.example.lunchboxkiosk.schedule;
 
-import com.example.lunckboxkiosk.model.dto.HsdCategoryDto;
+import com.example.lunchboxkiosk.model.dto.HsdCategoryDto;
+import com.example.lunchboxkiosk.service.HsdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +60,7 @@ public class CrawlingScheduler {
             );
 
             // 변환된 객체 출력
-            categories.forEach(System.out::println);
+            // categories.forEach(System.out::println);
 
             // 에러 출력
             BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
