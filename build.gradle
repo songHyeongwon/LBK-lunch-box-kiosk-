@@ -24,15 +24,39 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//	+------------------------------------------------------------------------+
+//	| Web															         |
+//	+------------------------------------------------------------------------+
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+//	+------------------------------------------------------------------------+
+//	| Data														             |
+//	+------------------------------------------------------------------------+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
+
+//	+------------------------------------------------------------------------+
+//	| Security														         |
+//	+------------------------------------------------------------------------+
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+//	+------------------------------------------------------------------------+
+//	| Utils														             |
+//	+------------------------------------------------------------------------+
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.6'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+    implementation 'org.modelmapper:modelmapper:2.4.4'
+
+//	+------------------------------------------------------------------------+
+//	| Test														             |
+//	+------------------------------------------------------------------------+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty "jasypt.encryptor.password", System.getProperties().get("jasypt.encryptor.password")
 }
