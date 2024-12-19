@@ -1,6 +1,6 @@
 package com.example.lunchboxkiosk.controller;
 
-import com.example.lunchboxkiosk.model.dto.HsdCategoryDto;
+import com.example.lunchboxkiosk.model.dto.hsd.HsdCategoryDto;
 import com.example.lunchboxkiosk.model.dto.response.GetHsdMenusResponseDto;
 import com.example.lunchboxkiosk.service.HsdService;
 import lombok.RequiredArgsConstructor;

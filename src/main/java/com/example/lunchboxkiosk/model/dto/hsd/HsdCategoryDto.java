@@ -1,6 +1,6 @@
-package com.example.lunchboxkiosk.model.dto;
+package com.example.lunchboxkiosk.model.dto.hsd;
 
-import com.example.lunchboxkiosk.model.entity.HsdMenu;
+import com.example.lunchboxkiosk.model.entity.hsd.HsdMenu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 

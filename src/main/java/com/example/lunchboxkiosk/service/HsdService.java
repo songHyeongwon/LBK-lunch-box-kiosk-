@@ -1,7 +1,7 @@
 package com.example.lunchboxkiosk.service;
 
-import com.example.lunchboxkiosk.model.dto.HsdCategoryDto;
-import com.example.lunchboxkiosk.model.entity.HsdCategory;
+import com.example.lunchboxkiosk.model.dto.hsd.HsdCategoryDto;
+import com.example.lunchboxkiosk.model.entity.hsd.HsdCategory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

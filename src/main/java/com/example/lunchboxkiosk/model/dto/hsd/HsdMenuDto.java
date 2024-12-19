@@ -1,4 +1,4 @@
-package com.example.lunchboxkiosk.model.dto;
+package com.example.lunchboxkiosk.model.dto.hsd;
 
 import lombok.*;
 

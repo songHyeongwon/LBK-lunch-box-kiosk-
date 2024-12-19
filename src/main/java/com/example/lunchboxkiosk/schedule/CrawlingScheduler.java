@@ -1,9 +1,8 @@
 package com.example.lunchboxkiosk.schedule;
 
-import com.example.lunchboxkiosk.model.dto.HsdCategoryDto;
+import com.example.lunchboxkiosk.model.dto.hsd.HsdCategoryDto;
 import com.example.lunchboxkiosk.service.HsdService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

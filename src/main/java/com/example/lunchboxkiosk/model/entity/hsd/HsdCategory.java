@@ -1,4 +1,4 @@
-package com.example.lunchboxkiosk.model.entity;
+package com.example.lunchboxkiosk.model.entity.hsd;
 
 import lombok.*;
 

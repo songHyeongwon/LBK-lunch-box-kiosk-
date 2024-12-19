@@ -1,6 +1,6 @@
 package com.example.lunchboxkiosk.model.dto.response;
 
-import com.example.lunchboxkiosk.model.dto.HsdCategoryDto;
+import com.example.lunchboxkiosk.model.dto.hsd.HsdCategoryDto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
