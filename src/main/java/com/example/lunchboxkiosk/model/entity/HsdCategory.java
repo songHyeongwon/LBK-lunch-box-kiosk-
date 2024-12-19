@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HsdCategory implements Serializable {
+
     private String name;
     private List<HsdCategory> subCategories;
     private List<HsdMenu> menus;

@@ -16,7 +16,6 @@ public class JasyptConfig {
     @Bean(name = "jasyptStringEncryptor")
     public StringEncryptor stringEncryptor() {
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
-
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         config.setPassword(this.password);
         config.setAlgorithm("PBEWithMD5AndDES");
@@ -26,6 +25,7 @@ public class JasyptConfig {
         config.setSaltGeneratorClassName("org.jasypt.salt.RandomSaltGenerator");
         config.setStringOutputType("base64");
         encryptor.setConfig(config);
+
         return encryptor;
     }
 }

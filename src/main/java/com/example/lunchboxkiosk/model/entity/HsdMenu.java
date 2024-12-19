@@ -10,6 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HsdMenu implements Serializable {
+
     private String name;
     private int price;
     private String imageUrl;

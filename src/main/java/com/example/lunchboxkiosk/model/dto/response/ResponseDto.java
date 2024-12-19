@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseDto {
+
     private int status;
     private String message;
 }
