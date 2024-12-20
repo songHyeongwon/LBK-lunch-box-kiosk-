@@ -21,5 +21,6 @@ public class MailScheduler {
         } catch (Exception e) {
             throw new RuntimeException("메일 발송 실패" + e.getMessage());
         }
+        log.info("HSD order mail send success.");
     }
 }

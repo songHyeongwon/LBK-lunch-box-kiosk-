@@ -1,6 +1,7 @@
 package com.example.lunchboxkiosk.service;
 
 import com.example.lunchboxkiosk.common.util.CodeGenerator;
+import com.example.lunchboxkiosk.model.dto.hsd.HsdMenuSummaryDto;
 import com.example.lunchboxkiosk.model.entity.hsd.HsdMenu;
 import com.example.lunchboxkiosk.model.entity.hsd.HsdOrder;
 import com.example.lunchboxkiosk.model.entity.hsd.HsdOrderMenu;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class MailService {
 
     private static final String HSD_MAIL_FROM = "noreply@accounts.gmail.com";
     private static final String HSD_MAIL_TO = "bumin@digicaps.com";
-    private static final String HSD_MAIL_SUBJECT = "[LBK] 한솥도시락 주문 목록";
+    private static final String HSD_MAIL_SUBJECT = "[LBK] 주문 목록";
 
     private String formatPrice(int price) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
@@ -42,41 +44,57 @@ public class MailService {
 
     private String getHsdEmailContent() {
         createHsdOrdersTest();
-        Map<String, List<HsdOrder>> hsdOrders = hsdOrderRepository.findAll();
 
         StringBuilder emailContent = new StringBuilder();
-        emailContent.append("<h1 style='font-family: sans-serif, Arial; color: #333; font-weight: normal; text-align: center;'>주문 목록</h1>");
-        emailContent.append("<table border='1' style='border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif;'>");
-        emailContent.append("<thead style='background-color: #f2f2f2;'>");
-        emailContent.append("<tr style='color: #555;'>");
-        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>주문자</th>");
-        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>메뉴</th>");
-        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>수량</th>");
-        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>가격(개)</th>");
-        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>결제 금액(원)</th>");
-        emailContent.append("</tr>");
-        emailContent.append("</thead>");
-        emailContent.append("<tbody>");
+        Map<String, List<HsdOrder>> hsdOrders = hsdOrderRepository.findAll();
+        Map<String, HsdMenuSummaryDto> menuSummaryMap = new HashMap<>();
 
-        for (Map.Entry<String, List<HsdOrder>> entry : hsdOrders.entrySet()) {
-            String key = entry.getKey();
-            List<HsdOrder> orders = entry.getValue();
-
+        for (List<HsdOrder> orders : hsdOrders.values()) {
             for (HsdOrder order : orders) {
                 for (HsdOrderMenu menu : order.getOrderMenus()) {
-                    emailContent.append("<tr style='border: 1px solid #ddd;'>");
-                    emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: left;'>").append(order.getIp()).append("</td>");
-                    emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: left;'>").append(menu.getMenu().getName()).append("</td>");
-                    emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>").append(menu.getQuantity()).append("</td>");
-                    emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>").append(formatPrice(menu.getMenu().getPrice())).append("</td>");
-                    emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>").append(formatPrice(menu.getQuantity() * menu.getMenu().getPrice())).append("</td>");
-                    emailContent.append("</tr>");
+                    String menuName = menu.getMenu().getName();
+                    menuSummaryMap.putIfAbsent(menuName, new HsdMenuSummaryDto(menu.getMenu().getPrice()));
+                    HsdMenuSummaryDto summary = menuSummaryMap.get(menuName);
+                    summary.addOrder(order.getIp(), menu.getQuantity());
                 }
             }
         }
 
+        for (HsdMenuSummaryDto summary : menuSummaryMap.values()) {
+            summary.consolidateOrderers();
+        }
+
+        emailContent.append("<h1 style='font-family: sans-serif, Arial; color: #333; font-weight: normal; text-align: center;'>주문 목록</h1>");
+        emailContent.append("<table border='1' style='border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif;'>");
+        emailContent.append("<thead style='background-color: #f2f2f2;'>");
+        emailContent.append("<tr style='color: #555;'>");
+        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>메뉴</th>");
+        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>주문자</th>");
+        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>수량</th>");
+        emailContent.append("<th style='padding: 8px; border: 1px solid #ddd;'>가격</th>");
+        emailContent.append("</tr>");
+        emailContent.append("</thead>");
+        emailContent.append("<tbody>");
+
+        int totalQuantity = 0;
+        int totalPrice = 0;
+        for (Map.Entry<String, HsdMenuSummaryDto> entry : menuSummaryMap.entrySet()) {
+            String menuName = entry.getKey();
+            HsdMenuSummaryDto summary = entry.getValue();
+            totalQuantity += summary.getTotalQuantity();
+            totalPrice += summary.getTotalPrice();
+
+            emailContent.append("<tr style='border: 1px solid #ddd;'>");
+            emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: left;'>").append(menuName).append("</td>");
+            emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: left;'>").append(summary.getOrderers()).append("</td>");
+            emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>").append(summary.getTotalQuantity()).append("</td>");
+            emailContent.append("<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>").append(formatPrice(summary.getTotalPrice())).append("</td>");
+            emailContent.append("</tr>");
+        }
         emailContent.append("</tbody>");
         emailContent.append("</table>");
+        emailContent.append("<p style='font-family: Arial, sans-serif; text-align: right;'><strong>주문 수량:</strong> ").append(totalQuantity).append("</p>");
+        emailContent.append("<p style='font-family: Arial, sans-serif; text-align: right;'><strong>결제 금액:</strong> ").append(formatPrice(totalPrice)).append("</p>");
 
         return emailContent.toString();
     }
@@ -107,7 +125,7 @@ public class MailService {
                 .orderMenus(List.of(
                         new HsdOrderMenu(new HsdMenu("소불고기 청양크림 파스타", 6500, "url1"), 2),
                         new HsdOrderMenu(new HsdMenu("햄버그 나폴리탄 파스타", 5500, "url2"), 1),
-                        new HsdOrderMenu(new HsdMenu("데미 미트볼 덮밥", 4900, "url3"), 3)
+                        new HsdOrderMenu(new HsdMenu("소불고기 청양크림 파스타", 6500, "url3"), 3)
                 ))
                 .build());
 
@@ -117,7 +135,7 @@ public class MailService {
                 .ip("192.168.0.2")
                 .orderMenus(List.of(
                         new HsdOrderMenu(new HsdMenu("오모가리 김치제육덮밥", 4900, "url4"), 1),
-                        new HsdOrderMenu(new HsdMenu("빅 오모가리 김치제육덮밥", 5500, "url5"), 4)
+                        new HsdOrderMenu(new HsdMenu("햄버그 나폴리탄 파스타", 5500, "url5"), 4)
                 ))
                 .build());
 
@@ -126,7 +144,7 @@ public class MailService {
                 .orderId(CodeGenerator.generateID("O"))
                 .ip("192.168.0.3")
                 .orderMenus(List.of(
-                        new HsdOrderMenu(new HsdMenu("한우 함박스테이크& 청양 토네이도 소세지", 8900, "url6"), 5)
+                        new HsdOrderMenu(new HsdMenu("햄버그 나폴리탄 파스타", 5500, "url6"), 5)
                 ))
                 .build());
 
@@ -135,7 +153,7 @@ public class MailService {
                 .orderId(CodeGenerator.generateID("O"))
                 .ip("192.168.0.1")
                 .orderMenus(List.of(
-                        new HsdOrderMenu(new HsdMenu("연잎 오리구이", 7700, "url1"), 1)
+                        new HsdOrderMenu(new HsdMenu("오모가리 김치제육덮밥", 4900, "url1"), 1)
                 ))
                 .build());
     }
