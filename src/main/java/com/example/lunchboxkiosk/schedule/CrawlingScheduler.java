@@ -61,8 +61,8 @@ public class CrawlingScheduler {
     }
 
 //    @Scheduled(fixedRate = 5000)            // 5초마다 실행
-    @Scheduled(cron = "0 */10 * * * *")     // 10분마다 실행
-//    @Scheduled(cron = "0 0 10 * * *")       // 매일 오전 10시 실행
+//    @Scheduled(cron = "0 */10 * * * *")     // 10분마다 실행
+    @Scheduled(cron = "0 0 10 * * *")       // 매일 오전 10시 실행
     public void hsdCrawlingSchedule() {
         try {
             // 프로세스 실행

@@ -13,8 +13,8 @@ public class MailScheduler {
 
     private final MailService mailService;
 
-    @Scheduled(fixedRate = 5000)
-    // @Scheduled(cron = "0 30 11 * * *")
+//    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0 30 11 * * *")
     public void hsdMailingSchedule() {
         try {
             mailService.sendHsdOrdersByEmail();

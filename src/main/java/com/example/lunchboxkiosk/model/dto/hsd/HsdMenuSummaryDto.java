@@ -11,9 +11,11 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 public class HsdMenuSummaryDto {
+
     private final int price;
     private int totalQuantity;
     private final Map<String, Integer> ordererMap;
+    private String orderers;
 
     public HsdMenuSummaryDto(int price) {
         this.price = price;
@@ -29,15 +31,13 @@ public class HsdMenuSummaryDto {
     public void consolidateOrderers() {
         StringBuilder consolidatedOrderers = new StringBuilder();
         for (Map.Entry<String, Integer> entry : ordererMap.entrySet()) {
-            if (consolidatedOrderers.length() > 0) {
+            if (!consolidatedOrderers.isEmpty()) {
                 consolidatedOrderers.append(", ");
             }
             consolidatedOrderers.append(entry.getKey()).append("(").append(entry.getValue()).append(")");
         }
         orderers = consolidatedOrderers.toString();
     }
-
-    private String orderers;
 
     public int getTotalPrice() {
         return totalQuantity * price;

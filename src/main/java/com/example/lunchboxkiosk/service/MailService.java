@@ -6,8 +6,6 @@ import com.example.lunchboxkiosk.model.entity.hsd.HsdMenu;
 import com.example.lunchboxkiosk.model.entity.hsd.HsdOrder;
 import com.example.lunchboxkiosk.model.entity.hsd.HsdOrderMenu;
 import com.example.lunchboxkiosk.repository.HsdOrderRepository;
-import com.example.lunchboxkiosk.repository.MemoryHsdOrderRepository;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +32,7 @@ public class MailService {
 
     private static final String HSD_MAIL_FROM = "noreply@accounts.gmail.com";
     private static final String HSD_MAIL_TO = "bumin@digicaps.com";
-    private static final String HSD_MAIL_SUBJECT = "[LBK] 주문 목록";
+    private static final String HSD_MAIL_SUBJECT = "[LBK] 도시락 주문 목록";
 
     private String formatPrice(int price) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.KOREA);
@@ -115,10 +112,10 @@ public class MailService {
         }
     }
 
+    // 테스트를 위해 가상의 주문자들의 주문 목록 생성
     public void createHsdOrdersTest() {
         hsdOrderRepository.clear();
 
-        // 첫 번째 주문 - 여러 메뉴 포함
         hsdOrderRepository.save(HsdOrder.builder()
                 .orderId(CodeGenerator.generateID("O"))
                 .ip("192.168.0.1")
@@ -129,7 +126,6 @@ public class MailService {
                 ))
                 .build());
 
-        // 두 번째 주문 - 또 다른 메뉴 세트
         hsdOrderRepository.save(HsdOrder.builder()
                 .orderId(CodeGenerator.generateID("O"))
                 .ip("192.168.0.2")
@@ -139,7 +135,6 @@ public class MailService {
                 ))
                 .build());
 
-        // 세 번째 주문 - 단일 메뉴 포함
         hsdOrderRepository.save(HsdOrder.builder()
                 .orderId(CodeGenerator.generateID("O"))
                 .ip("192.168.0.3")
@@ -148,7 +143,6 @@ public class MailService {
                 ))
                 .build());
 
-        // 네 번째 주문 - 동일인이 추가 주문
         hsdOrderRepository.save(HsdOrder.builder()
                 .orderId(CodeGenerator.generateID("O"))
                 .ip("192.168.0.1")
