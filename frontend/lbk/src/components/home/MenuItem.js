@@ -9,9 +9,26 @@ import {
 } from "@mui/material";
 
 const MenuItem = ({ image, title, price, isNew }) => (
-  <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+  <Card
+    sx={{
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+    }}
+  >
     <Box sx={{ position: "relative" }}>
-      <CardMedia component="img" height="200" image={image} alt={title} />
+      <CardMedia
+        component="img"
+        sx={{
+          width: 260,
+          height: 260,
+          objectFit: "cover",
+          margin: "0 auto", // 이미지를 중앙 정렬
+        }}
+        image={image}
+        alt={title}
+      />
       {isNew && (
         <Chip
           label="NEW"
@@ -26,7 +43,7 @@ const MenuItem = ({ image, title, price, isNew }) => (
       )}
     </Box>
     <CardContent>
-      <Typography gutterBottom variant="h6" component="h2">
+      <Typography gutterBottom variant="body1" component="h2" fontWeight="bold">
         {title}
       </Typography>
       <Typography variant="body1" color="primary" fontWeight="bold">
