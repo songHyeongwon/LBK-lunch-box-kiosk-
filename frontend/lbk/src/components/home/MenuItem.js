@@ -6,9 +6,10 @@ import {
   Typography,
   Box,
   Chip,
+  Button,
 } from "@mui/material";
 
-const MenuItem = ({ image, title, price, isNew }) => (
+const MenuItem = ({ image, title, price, isNew, onAddToCart }) => (
   <Card
     sx={{
       width: "100%",
@@ -24,7 +25,7 @@ const MenuItem = ({ image, title, price, isNew }) => (
           width: 260,
           height: 260,
           objectFit: "cover",
-          margin: "0 auto", // 이미지를 중앙 정렬
+          margin: "0 auto",
         }}
         image={image}
         alt={title}
@@ -46,9 +47,30 @@ const MenuItem = ({ image, title, price, isNew }) => (
       <Typography gutterBottom variant="body1" component="h2" fontWeight="bold">
         {title}
       </Typography>
-      <Typography variant="body1" color="primary" fontWeight="bold">
-        {price.toLocaleString()}원
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="body1" color="primary" fontWeight="bold">
+          {price.toLocaleString()}원
+        </Typography>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={onAddToCart}
+          sx={{
+            backgroundColor: "#8bc34a",
+            "&:hover": {
+              backgroundColor: "#7cb342",
+            },
+          }}
+        >
+          담기
+        </Button>
+      </Box>
     </CardContent>
   </Card>
 );
