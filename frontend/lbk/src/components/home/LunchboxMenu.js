@@ -4,7 +4,7 @@ import MenuItem from "./MenuItem";
 import Menubar from "./Menubar";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
-import CartFooter from "./CartFooter";
+import Cart from "./Cart";
 import lunchbox1 from "../../assets/images/test.jpg";
 
 const LunchboxMenu = () => {
@@ -104,7 +104,12 @@ const LunchboxMenu = () => {
   };
 
   const handleRemoveItem = (index) => {
-    setCartItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    if (index === undefined) {
+      // 취소 버튼 클릭 시 장바구니 전체 비우기
+      setCartItems([]);
+    } else {
+      setCartItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    }
   };
 
   const handleUpdateQuantity = (index, change) => {
@@ -136,7 +141,7 @@ const LunchboxMenu = () => {
           mt: 8,
           height: "100%",
           overflow: "auto",
-          paddingBottom: cartItems.length > 0 ? "40vh" : 0,
+          pr: cartItems.length > 0 ? "300px" : 3, // 장바구니가 있을 때 오른쪽 여백 추가
         }}
       >
         <Container>
@@ -149,7 +154,7 @@ const LunchboxMenu = () => {
             ))}
           </Grid>
         </Container>
-        <CartFooter
+        <Cart
           cartItems={cartItems}
           onRemoveItem={handleRemoveItem}
           onOrder={handleOrder}
