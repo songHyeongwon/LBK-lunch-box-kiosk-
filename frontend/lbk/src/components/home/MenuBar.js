@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AppBar, Toolbar, Button, Container } from "@mui/material";
 
 const Menubar = () => {
-  const [selectedItem, setSelectedItem] = useState("든든도시락");
+  const [selectedItem, setSelectedItem] = useState("도시락몰");
 
   const menuItems = [
     "도시락몰",

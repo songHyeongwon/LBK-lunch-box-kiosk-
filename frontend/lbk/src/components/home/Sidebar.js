@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 
 const Sidebar = () => {
-  const [selectedItem, setSelectedItem] = useState("든든도시락");
+  const [selectedItem, setSelectedItem] = useState("본도시락");
 
   const menuItems = ["본도시락", "추가예정..."];
 
