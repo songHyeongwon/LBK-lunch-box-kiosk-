@@ -1,7 +1,10 @@
 package com.example.lunchboxkiosk.schedule;
 
-import com.example.lunchboxkiosk.model.dto.hsd.HsdCategoryDto;
-import com.example.lunchboxkiosk.service.HsdService;
+import com.example.lunchboxkiosk.model.dto.common.BrandDto;
+import com.example.lunchboxkiosk.model.dto.common.CategoryDto;
+import com.example.lunchboxkiosk.model.dto.common.CrawledMenuDataDto;
+import com.example.lunchboxkiosk.model.dto.common.MenuDto;
+import com.example.lunchboxkiosk.service.CrawledDataService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CrawlingScheduler {
 
-    private final HsdService hsdService;
+    private final CrawledDataService crawledDataService;
     private final ObjectMapper objectMapper;
 
     private static final String HSD_CRAWLER_SCRIPT = "hsd_crawler.py";
@@ -60,9 +63,9 @@ public class CrawlingScheduler {
         }
     }
 
-    @Scheduled(fixedRate = 5000)            // 5초마다 실행
+//    @Scheduled(fixedRate = 5000)            // 5초마다 실행
 //    @Scheduled(cron = "0 */10 * * * *")     // 10분마다 실행
-//    @Scheduled(cron = "0 0 10 * * *")       // 매일 오전 10시 실행
+    @Scheduled(cron = "0 0 10 * * *")       // 매일 오전 10시 실행
     public void hsdCrawlingSchedule() {
         try {
             // 프로세스 실행
@@ -70,17 +73,19 @@ public class CrawlingScheduler {
             ProcessBuilder processBuilder = new ProcessBuilder("python", script);
             Process process = processBuilder.start();
             
-            // 프로세스 출력 결과를 String(Json)으로 반환하고 List<HsdCategoryDto>로 변환하여 Redis에 저장
             String processOutput = fetchProcessOutputAsString(process);
-            List<HsdCategoryDto> categories = objectMapper.readValue(
-                    processOutput,
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, HsdCategoryDto.class)
-            );
-            hsdService.saveCategories(categories);
+            log.info("python output: {}", processOutput);
+            CrawledMenuDataDto crawledMenuDataDto = objectMapper.readValue(processOutput, CrawledMenuDataDto.class);
+            BrandDto brand = crawledMenuDataDto.getBrand();
+            List<CategoryDto> categories = crawledMenuDataDto.getCategories();
+            List<MenuDto> menus = crawledMenuDataDto.getMenus();
+            crawledDataService.saveBrands(brand);
+            crawledDataService.saveCategories(brand.getName(), categories);
+            crawledDataService.saveMenus(brand.getName(), menus);
 
             // 에러 발생 여부 체크
             checkProcessError(process);
-            log.info("HSD crawling success");
+            log.info("hsdCrawlingSchedule success");
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);

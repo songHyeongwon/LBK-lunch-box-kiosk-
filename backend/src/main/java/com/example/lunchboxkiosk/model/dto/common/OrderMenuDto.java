@@ -1,6 +1,5 @@
-package com.example.lunchboxkiosk.model.dto.hsd;
+package com.example.lunchboxkiosk.model.dto.common;
 
-import com.example.lunchboxkiosk.model.entity.hsd.HsdMenu;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HsdOrderMenuDto {
-
-    private HsdMenu menu;
+public class OrderMenuDto {
+    private MenuDto menu;
     private int quantity;
 }
