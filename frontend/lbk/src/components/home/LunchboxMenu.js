@@ -1,14 +1,17 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Grid, Container, Box } from "@mui/material";
 import MenuItem from "./MenuItem";
-import Menubar from "./Menubar";
-import Sidebar from "./Sidebar";
-import Topbar from "./Topbar";
+import Menubar from "./MenuBar";
+import Sidebar from "./SideBar";
+import Topbar from "./TopBar";
 import Cart from "./Cart";
 import lunchbox1 from "../../assets/images/test.jpg";
 
 const LunchboxMenu = () => {
   const [cartItems, setCartItems] = useState([]);
+  const location = useLocation();
+  const email = location.state?.email;
 
   const menuItems = [
     {
@@ -126,6 +129,7 @@ const LunchboxMenu = () => {
 
   const handleOrder = () => {
     // 주문 처리 로직 구현
+    console.log(email);
     console.log("주문 처리:", cartItems);
   };
 
