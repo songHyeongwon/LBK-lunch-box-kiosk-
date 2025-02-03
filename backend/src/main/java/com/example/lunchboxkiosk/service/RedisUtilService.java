@@ -32,13 +32,11 @@ public class RedisUtilService {
         RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
         Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(pattern).count(100).build());
 
-        Set<String> keys = new HashSet<>();  // 반환할 Set을 초기화합니다.
-
-        // Cursor를 통해 모든 키를 가져옵니다.
+        Set<String> keys = new HashSet<>();
         while (cursor.hasNext()) {
-            keys.add(new String(cursor.next()));  // 키를 Set에 추가
+            keys.add(new String(cursor.next()));
         }
 
-        return keys;  // 모든 키를 포함한 Set 반환
+        return keys;
     }
 }

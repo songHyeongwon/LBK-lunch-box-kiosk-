@@ -73,20 +73,6 @@ public class MenuService {
         }
 
         return menuDetails;
-
-//
-//
-//        return GetMenusResponseDto.builder()
-//                .status(HttpStatus.OK.value())
-//                .message("success")
-//                .menus(menuDetails)
-//                .page(PageDto.builder()
-//                        .totalPages(totalPages)
-//                        .currentPage(page)
-//                        .size(size)
-//                        .totalElements(totalElements)
-//                        .build())
-//                .build();
     }
 
     public List<MenuDetailDto> getMenusByBrandId(String key, int page, int size) {

@@ -19,6 +19,4 @@ public class MenuRepository {
         Object menuData = redisTemplate.opsForValue().get(key);
         return objectMapper.convertValue(menuData, MenuDto.class);
     }
-
-
 }

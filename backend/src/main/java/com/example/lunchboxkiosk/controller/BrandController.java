@@ -21,7 +21,7 @@ public class BrandController {
 
     private final BrandService brandService;
 
-    // 전체 브랜드 목록 조회
+    // 브랜드 목록 조회
     @GetMapping()
     public ResponseEntity<GetBrandsResponseDto> getBrands() {
         List<BrandDto> brands = brandService.getAllBrands();
