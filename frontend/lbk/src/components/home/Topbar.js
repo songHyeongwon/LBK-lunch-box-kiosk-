@@ -1,7 +1,7 @@
 import React from "react";
 import { AppBar, Toolbar, Typography } from "@mui/material";
 
-const Topbar = () => {
+const TopBar = () => {
   return (
     <AppBar
       position="fixed"
@@ -27,4 +27,4 @@ const Topbar = () => {
   );
 };
 
-export default Topbar;
+export default TopBar;

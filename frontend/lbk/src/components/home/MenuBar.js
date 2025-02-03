@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Button, Container } from "@mui/material";
 
-const Menubar = () => {
+const MenuBar = () => {
   const [selectedItem, setSelectedItem] = useState("도시락몰");
 
   const menuItems = [
@@ -48,4 +48,4 @@ const Menubar = () => {
   );
 };
 
-export default Menubar;
+export default MenuBar;

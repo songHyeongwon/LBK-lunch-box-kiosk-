@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Grid, Container, Box } from "@mui/material";
 import MenuItem from "./MenuItem";
-import Menubar from "./MenuBar";
-import Sidebar from "./SideBar";
-import Topbar from "./TopBar";
+import MenuBar from "./MenuBar";
+import SideBar from "./SideBar";
+import TopBar from "./TopBar";
 import Cart from "./Cart";
 import lunchbox1 from "../../assets/images/test.jpg";
 
@@ -135,8 +135,8 @@ const LunchboxMenu = () => {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <Topbar />
-      <Sidebar />
+      <TopBar />
+      <SideBar />
       <Box
         component="main"
         sx={{
@@ -149,7 +149,7 @@ const LunchboxMenu = () => {
         }}
       >
         <Container>
-          <Menubar />
+          <MenuBar />
           <Grid container spacing={5}>
             {menuItems.map((item, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>

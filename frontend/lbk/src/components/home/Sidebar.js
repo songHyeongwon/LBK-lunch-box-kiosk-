@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 
-const Sidebar = () => {
+const SideBar = () => {
   const [selectedItem, setSelectedItem] = useState("본도시락");
 
   const menuItems = ["본도시락", "추가예정..."];
@@ -65,4 +65,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SideBar;
