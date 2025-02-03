@@ -1,14 +1,16 @@
 package com.example.lunchboxkiosk.service;
 
 import com.example.lunchboxkiosk.model.dto.common.*;
+import com.example.lunchboxkiosk.model.dto.response.GetBrandCategoryMenusResponseDto;
+import com.example.lunchboxkiosk.model.dto.response.GetBrandMenusResponseDto;
+import com.example.lunchboxkiosk.model.dto.response.GetMenuResponseDto;
+import com.example.lunchboxkiosk.model.dto.response.GetMenusResponseDto;
 import com.example.lunchboxkiosk.repository.MenuRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.lunchboxkiosk.repository.MenuSearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,69 +21,40 @@ import java.util.*;
 public class MenuService {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper;
     private final BrandService brandService;
+    private final CategoryService categoryService;
+    private final RedisUtilService redisUtilService;
     private final MenuRepository menuRepository;
-
-    private String findKeyByPattern(String pattern) {
-        RedisConnection connection = redisTemplate.getConnectionFactory().getConnection();
-        Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(pattern).count(100).build());
-
-        while (cursor.hasNext()) {
-            return new String(cursor.next());
-        }
-        return null;
-    }
+    private final MenuSearchRepository menuSearchRepository;
 
     private MenuDto findMenuById(String menuId) {
-        String keyPattern = "menus:*:" + menuId;
-        String key = findKeyByPattern(keyPattern);
+        String keyPattern = "menu:*:" + menuId;
+        String key = redisUtilService.getKey(keyPattern);
         if (key == null) {
-            throw new IllegalArgumentException("menuId: " + menuId + " not found");
+            throw new RuntimeException("menuId: " + menuId + " not found");
         }
-        Object menuData = redisTemplate.opsForValue().get(key);
 
-        return objectMapper.convertValue(menuData, MenuDto.class);
+        return menuRepository.findById(key);
     }
 
-    private CategoryDto findCategoryById(String categoryId) {
-        String keyPattern = "categories:*:" + categoryId;
-        String key = findKeyByPattern(keyPattern);
-        if (key == null) {
-            throw new IllegalArgumentException("categoryId: " + categoryId + " not found");
-        }
-        Object categoryData = redisTemplate.opsForValue().get(key);
-
-        return objectMapper.convertValue(categoryData, CategoryDto.class);
-    }
-
-    private BrandDto findBrandById(String brandId) {
-        List<BrandDto> brands = brandService.getAllBrands();
-
-        return brands.stream()
-                .filter(brand -> brandId.equals(brand.getId()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Brand with ID " + brandId + " not found."));
-    }
-
-    public List<MenuDetailDto> getAllMenus(int page, int size) {
+    public GetMenusResponseDto getMenus(int page, int size) {
         int startIndex = (page - 1) * size;
         int endIndex = startIndex + size - 1;
+        String key = "search:brand:all:category:all:menu:all";
 
-        Set<Object> allMenuIds = redisTemplate.opsForZSet().range("all_menu_ids", startIndex, endIndex);
-        if (allMenuIds == null || allMenuIds.isEmpty()) {
-            return Collections.emptyList();
+        Set<Object> objects = menuSearchRepository.findAllWithPaging(key, startIndex, endIndex);
+        if (objects == null || objects.isEmpty()) {
+            throw new RuntimeException("Resource not found.");
         }
 
         List<MenuDetailDto> menuDetails = new ArrayList<>();
-        for (Object menuId : allMenuIds) {
+        for (Object menuId : objects) {
             MenuDto menu = findMenuById(menuId.toString());
             if (menu == null) {
                 continue;
             }
-
-            CategoryDto category = findCategoryById(menu.getCategoryId());
-            BrandDto brand = findBrandById(menu.getBrandId());
+            CategoryDto category = categoryService.findCategoryById(menu.getCategoryId());
+            BrandDto brand = brandService.findBrandById(menu.getBrandId());
 
             MenuDetailDto detailDto = MenuDetailDto.builder()
                     .menu(menu)
@@ -91,18 +64,127 @@ public class MenuService {
             menuDetails.add(detailDto);
         }
 
-        return menuDetails;
+        Long totalElements = menuSearchRepository.countAllByKey(key);
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return GetMenusResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("success")
+                .menus(menuDetails)
+                .page(PageDto.builder()
+                        .totalPages(totalPages)
+                        .currentPage(page)
+                        .size(size)
+                        .totalElements(totalElements)
+                        .build())
+                .build();
     }
 
-    public PageDto getPageInfo(int page, int size) {
-        Long totalElements = redisTemplate.opsForZSet().zCard("all_menu_ids");
-        int total = (int) Math.ceil((double) totalElements / size);
+    public GetBrandMenusResponseDto getMenusByBrandId(String brandId, int page, int size) {
+        int startIndex = (page - 1) * size;
+        int endIndex = startIndex + size - 1;
+        String key = "search:brand:" + brandId + ":category:all:menu:all";
 
-        return PageDto.builder()
-                .total(total)
-                .number(page)
-                .size(size)
-                .totalElements(totalElements)
+        Set<Object> objects = menuSearchRepository.findByBrandIdWithPaging(key, startIndex, endIndex);
+        if (objects == null || objects.isEmpty()) {
+            throw new RuntimeException("Resource not found.");
+        }
+
+        List<MenuDetailDto> menuDetails = new ArrayList<>();
+        for (Object menuId : objects) {
+            MenuDto menu = findMenuById(menuId.toString());
+            if (menu == null) {
+                continue;
+            }
+            CategoryDto category = categoryService.findCategoryById(menu.getCategoryId());
+            BrandDto brand = brandService.findBrandById(menu.getBrandId());
+
+            MenuDetailDto detailDto = MenuDetailDto.builder()
+                    .menu(menu)
+                    .brand(brand)
+                    .category(category)
+                    .build();
+            menuDetails.add(detailDto);
+        }
+
+        Long totalElements = menuSearchRepository.countAllByKey(key);
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return GetBrandMenusResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("success")
+                .menus(menuDetails)
+                .page(PageDto.builder()
+                        .totalPages(totalPages)
+                        .currentPage(page)
+                        .size(size)
+                        .totalElements(totalElements)
+                        .build())
+                .build();
+    }
+
+    public GetBrandCategoryMenusResponseDto getMenusByBrandIdAndCategoryId(String brandId, String categoryId, int page, int size) {
+        int startIndex = (page - 1) * size;
+        int endIndex = startIndex + size - 1;
+        String keyPattern = "search:brand:" + brandId + ":category:" + categoryId + ":*";
+        String key = redisUtilService.getKey(keyPattern);
+
+        Set<Object> objects = menuSearchRepository.findByBrandIdAndCategoryIdWithPaging(key, startIndex, endIndex);
+        if (objects == null || objects.isEmpty()) {
+            throw new RuntimeException("Resource not found.");
+        }
+
+        List<MenuDetailDto> menuDetails = new ArrayList<>();
+        for (Object menuId : objects) {
+            MenuDto menu = findMenuById(menuId.toString());
+            if (menu == null) {
+                continue;
+            }
+            CategoryDto category = categoryService.findCategoryById(menu.getCategoryId());
+            BrandDto brand = brandService.findBrandById(menu.getBrandId());
+
+            MenuDetailDto detailDto = MenuDetailDto.builder()
+                    .menu(menu)
+                    .brand(brand)
+                    .category(category)
+                    .build();
+            menuDetails.add(detailDto);
+        }
+
+        Long totalElements = menuSearchRepository.countAllByKey(key);
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return GetBrandCategoryMenusResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("success")
+                .menus(menuDetails)
+                .page(PageDto.builder()
+                        .totalPages(totalPages)
+                        .currentPage(page)
+                        .size(size)
+                        .totalElements(totalElements)
+                        .build())
+                .build();
+    }
+
+    public GetMenuResponseDto getMenuByMenuId(String menuId) {
+        MenuDto menu = findMenuById(menuId);
+        if (menu == null) {
+            throw new RuntimeException("Resource not found.");
+        }
+
+        CategoryDto category = categoryService.findCategoryById(menu.getCategoryId());
+        BrandDto brand = brandService.findBrandById(menu.getBrandId());
+        MenuDetailDto detailDto = MenuDetailDto.builder()
+                .menu(menu)
+                .brand(brand)
+                .category(category)
+                .build();
+
+        return GetMenuResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("success")
+                .menu(detailDto)
                 .build();
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=true)
-public class GetAllMenusResponseDto extends ResponseDto {
+public class GetMenusResponseDto extends ResponseDto {
 
     List<MenuDetailDto> menus;
     PageDto page;

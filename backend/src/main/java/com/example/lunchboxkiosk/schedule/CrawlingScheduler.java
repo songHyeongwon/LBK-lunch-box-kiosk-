@@ -80,8 +80,8 @@ public class CrawlingScheduler {
             List<CategoryDto> categories = crawledMenuDataDto.getCategories();
             List<MenuDto> menus = crawledMenuDataDto.getMenus();
             crawledDataService.saveBrands(brand);
-            crawledDataService.saveCategories(brand.getName(), categories);
-            crawledDataService.saveMenus(brand.getName(), menus);
+            crawledDataService.saveCategories(brand.getId(), categories);
+            crawledDataService.saveMenus(brand.getId(), menus);
 
             // 에러 발생 여부 체크
             checkProcessError(process);

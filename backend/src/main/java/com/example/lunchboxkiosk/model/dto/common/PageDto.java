@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PageDto {
 
-    private int total;
-    private int number;
+    private int totalPages;
+    private int currentPage;
     private int size;
     private long totalElements;
 }

@@ -24,26 +24,27 @@ public class CrawledDataService {
 
     public void saveBrands(BrandDto brandDto) {
         Brand brand = modelMapper.map(brandDto, Brand.class);
-        String key = "brands:" + brand.getName();
+        String key = "brand:" + brand.getId();
         redisTemplate.opsForValue().set(key, brand);
     }
 
-    public void saveCategories(String brandName, List<CategoryDto> categoryDtoList) {
+    public void saveCategories(String brandId, List<CategoryDto> categoryDtoList) {
         categoryDtoList.forEach(categoryDto -> {
             Category category = modelMapper.map(categoryDto, Category.class);
-            String key = "categories:" + brandName + ":" + category.getId();
+            String key = "category:" + brandId + ":" + category.getId();
             redisTemplate.opsForValue().set(key, category);
         });
     }
 
-    public void saveMenus(String brandName, List<MenuDto> menuDtoList) {
+    public void saveMenus(String brandId, List<MenuDto> menuDtoList) {
         menuDtoList.forEach(menuDto -> {
             Menu menu = modelMapper.map(menuDto, Menu.class);
-            String key = "menus:" + brandName + ":" + menu.getId();
+            String key = "menu:" + brandId + ":" + menu.getCategoryId() + ":" + menu.getId();
             redisTemplate.opsForValue().set(key, menu);
 
-            redisTemplate.opsForZSet().add("all_menu_ids", menu.getId(), System.currentTimeMillis());
+            redisTemplate.opsForZSet().add("search:brand:all:category:all:menu:all", menu.getId(), System.currentTimeMillis());
+            redisTemplate.opsForZSet().add("search:brand:" + brandId + ":category:all:menu:all", menu.getId(), System.currentTimeMillis());
+            redisTemplate.opsForZSet().add("search:brand:" + brandId + ":category:" + menu.getCategoryId() + ":menu:all", menu.getId(), System.currentTimeMillis());
         });
     }
-
 }
