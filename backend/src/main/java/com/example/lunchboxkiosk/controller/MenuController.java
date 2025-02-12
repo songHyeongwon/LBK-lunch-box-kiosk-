@@ -7,6 +7,7 @@ import com.example.lunchboxkiosk.model.dto.response.GetBrandMenusResponseDto;
 import com.example.lunchboxkiosk.model.dto.response.GetMenuResponseDto;
 import com.example.lunchboxkiosk.model.dto.response.GetMenusResponseDto;
 import com.example.lunchboxkiosk.service.MenuService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class MenuController {
 
     private final MenuService menuService;
 
-    // 전체 메뉴 목록 조회
+    @Operation(summary = "전체 메뉴 목록 조회")
     @GetMapping
     public ResponseEntity<GetMenusResponseDto> getMenus(@RequestParam(value = "page", defaultValue = "1") int page,
                                                         @RequestParam(value = "size", defaultValue = "20") int size) {
@@ -39,7 +40,7 @@ public class MenuController {
                 .build());
     }
 
-    // 브랜드 별 메뉴 목록 조회
+    @Operation(summary = "브랜드 별 메뉴 목록 조회")
     @GetMapping("/{brand_id}")
     public ResponseEntity<GetBrandMenusResponseDto> getBrandMenus(@PathVariable(name = "brand_id") String brandId,
                                                                   @RequestParam(value = "page", defaultValue = "1") int page,
@@ -55,8 +56,8 @@ public class MenuController {
                 .page(pageInfo)
                 .build());
     }
-    
-    // 브랜드+카테고리 별 메뉴 목록 조회
+
+    @Operation(summary = "브랜드+카테고리 별 메뉴 목록 조회")
     @GetMapping("/{brand_id}/{category_id}")
     public ResponseEntity<GetBrandCategoryMenusResponseDto> getBrandCategoryMenus(@PathVariable(name = "brand_id") String brandId,
                                                                                   @PathVariable(name = "category_id") String categoryId,
@@ -75,8 +76,7 @@ public class MenuController {
                 .build());
     }
 
-
-    // 메뉴 상세 조회
+    @Operation(summary = "메뉴 상세 조회")
     @GetMapping("/detail/{menu_id}")
     public ResponseEntity<GetMenuResponseDto> getMenu(@PathVariable(name = "menu_id") String menuId) {
         MenuDetailDto menu = menuService.getMenuDetailById(menuId);

@@ -4,6 +4,8 @@ server:
 spring:
   mvc:
     log-resolved-exception: false
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
   data:
     redis:
       host: localhost

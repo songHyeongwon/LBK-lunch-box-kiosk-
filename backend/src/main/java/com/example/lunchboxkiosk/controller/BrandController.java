@@ -3,6 +3,7 @@ package com.example.lunchboxkiosk.controller;
 import com.example.lunchboxkiosk.model.dto.common.BrandDto;
 import com.example.lunchboxkiosk.model.dto.response.GetBrandsResponseDto;
 import com.example.lunchboxkiosk.service.BrandService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class BrandController {
 
     private final BrandService brandService;
 
-    // 전체 브랜드 목록 조회
+    @Operation(summary = "전체 브랜드 목록 조회")
     @GetMapping()
     public ResponseEntity<GetBrandsResponseDto> getBrands() {
         List<BrandDto> brands = brandService.getAllBrands();

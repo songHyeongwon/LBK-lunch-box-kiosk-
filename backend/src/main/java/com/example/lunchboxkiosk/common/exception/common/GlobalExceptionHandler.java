@@ -4,7 +4,6 @@ import com.example.lunchboxkiosk.common.exception.ErrorCode;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.response.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,16 +44,4 @@ public class GlobalExceptionHandler {
     //    +------------------------------------------------------------------+
     //    |                        5xx Server Errors                         |
     //    +------------------------------------------------------------------+
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<ErrorResponseDto> handleException(RuntimeException e) {
-//        log.error(e.getMessage(), e);
-//
-//        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-//        errorCode.setMessage(e.getMessage());
-//
-//        return ResponseEntity
-//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(new ErrorResponseDto(errorCode));
-//    }
-
 }
