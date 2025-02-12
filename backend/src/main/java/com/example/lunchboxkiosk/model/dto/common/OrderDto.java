@@ -15,6 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDto {
     private String id;
-    private UserDto user;
+    private String phoneNumber;
     private List<OrderMenuDto> menus;
+    private int totalPrice;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

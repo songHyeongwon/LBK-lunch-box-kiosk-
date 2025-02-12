@@ -22,7 +22,7 @@ public class MenuService {
     private final RedisUtilService redisUtilService;
     private final MenuRepository menuRepository;
 
-    private MenuDto getMenuById(String menuId) {
+    public MenuDto getMenuById(String menuId) {
         String keyPattern = "menu:*:" + menuId;
         String key = redisUtilService.getKey(keyPattern);
         if (key == null) {

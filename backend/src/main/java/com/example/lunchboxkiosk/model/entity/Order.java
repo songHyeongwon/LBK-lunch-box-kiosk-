@@ -12,8 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public class Order {
     private String id;
-    private User user;
+    private String phoneNumber;
     private List<OrderMenu> menus;
+    private int totalPrice;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
