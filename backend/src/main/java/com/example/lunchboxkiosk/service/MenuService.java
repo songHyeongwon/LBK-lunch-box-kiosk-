@@ -3,8 +3,9 @@ package com.example.lunchboxkiosk.service;
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.common.*;
+import com.example.lunchboxkiosk.repository.BrandRepository;
+import com.example.lunchboxkiosk.repository.CategoryRepository;
 import com.example.lunchboxkiosk.repository.MenuRepository;
-import com.example.lunchboxkiosk.repository.MenuSearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,6 @@ public class MenuService {
     private final CategoryService categoryService;
     private final RedisUtilService redisUtilService;
     private final MenuRepository menuRepository;
-    private final MenuSearchRepository menuSearchRepository;
 
     private MenuDto getMenuById(String menuId) {
         String keyPattern = "menu:*:" + menuId;
@@ -33,7 +33,7 @@ public class MenuService {
     }
 
     public PageDto getPageInfo(String key, int page, int size) {
-        Long totalElements = menuSearchRepository.countAllByKey(key);
+        Long totalElements = menuRepository.countAllByKey(key);
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
         return PageDto.builder()
@@ -52,7 +52,7 @@ public class MenuService {
         int startIndex = (page - 1) * size;
         int endIndex = startIndex + size - 1;
 
-        Set<Object> objects = menuSearchRepository.findAllWithPaging(key, startIndex, endIndex);
+        Set<Object> objects = menuRepository.findAllWithPaging(key, startIndex, endIndex);
         if (objects == null || objects.isEmpty()) {
             throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, key);
         }
@@ -70,7 +70,7 @@ public class MenuService {
         int startIndex = (page - 1) * size;
         int endIndex = startIndex + size - 1;
 
-        Set<Object> objects = menuSearchRepository.findByBrandIdWithPaging(key, startIndex, endIndex);
+        Set<Object> objects = menuRepository.findByBrandIdWithPaging(key, startIndex, endIndex);
         if (objects == null || objects.isEmpty()) {
             throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, key);
         }
@@ -88,7 +88,7 @@ public class MenuService {
         int startIndex = (page - 1) * size;
         int endIndex = startIndex + size - 1;
 
-        Set<Object> objects = menuSearchRepository.findByBrandIdAndCategoryIdWithPaging(key, startIndex, endIndex);
+        Set<Object> objects = menuRepository.findByBrandIdAndCategoryIdWithPaging(key, startIndex, endIndex);
         if (objects == null || objects.isEmpty()) {
             throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, key);
         }

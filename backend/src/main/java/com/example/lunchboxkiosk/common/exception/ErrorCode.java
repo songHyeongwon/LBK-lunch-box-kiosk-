@@ -26,7 +26,6 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category not found with id: {0}"),
     REDIS_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "Redis key not found. key(s): {0}");
 
-
     private final HttpStatus httpStatus;
     private final String defaultMessage;
     @Setter
@@ -36,7 +35,7 @@ public enum ErrorCode {
         if (args == null || args.length == 0) {
             this.message = defaultMessage;
         } else {
-            message = MessageFormat.format(defaultMessage, (Object[]) args);
+            this.message = MessageFormat.format(defaultMessage, (Object[]) args);
         }
     }
 }

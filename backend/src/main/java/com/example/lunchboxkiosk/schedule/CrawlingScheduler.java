@@ -4,7 +4,9 @@ import com.example.lunchboxkiosk.model.dto.common.BrandDto;
 import com.example.lunchboxkiosk.model.dto.common.CategoryDto;
 import com.example.lunchboxkiosk.model.dto.common.CrawledMenuDataDto;
 import com.example.lunchboxkiosk.model.dto.common.MenuDto;
-import com.example.lunchboxkiosk.service.CrawledDataService;
+import com.example.lunchboxkiosk.repository.BrandRepository;
+import com.example.lunchboxkiosk.repository.CategoryRepository;
+import com.example.lunchboxkiosk.repository.MenuRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CrawlingScheduler {
 
-    private final CrawledDataService crawledDataService;
+    private final MenuRepository menuRepository;
+    private final BrandRepository brandRepository;
+    private final CategoryRepository categoryRepository;
     private final ObjectMapper objectMapper;
 
     private static final String HSD_CRAWLER_SCRIPT = "hsd_crawler.py";
@@ -79,9 +83,9 @@ public class CrawlingScheduler {
             BrandDto brand = crawledMenuDataDto.getBrand();
             List<CategoryDto> categories = crawledMenuDataDto.getCategories();
             List<MenuDto> menus = crawledMenuDataDto.getMenus();
-            crawledDataService.saveBrands(brand);
-            crawledDataService.saveCategories(brand.getId(), categories);
-            crawledDataService.saveMenus(brand.getId(), menus);
+            brandRepository.saveBrands(brand);
+            categoryRepository.saveCategories(brand.getId(), categories);
+            menuRepository.saveMenus(brand.getId(), menus);
 
             // 에러 발생 여부 체크
             checkProcessError(process);
