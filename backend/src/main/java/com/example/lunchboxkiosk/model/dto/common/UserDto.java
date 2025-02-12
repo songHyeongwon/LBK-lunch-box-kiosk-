@@ -5,16 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDto {
-    private String id;
-    private UserDto user;
-    private List<OrderMenuDto> menus;
+public class UserDto {
+    private String username;
+    private String phoneNumber;
 }

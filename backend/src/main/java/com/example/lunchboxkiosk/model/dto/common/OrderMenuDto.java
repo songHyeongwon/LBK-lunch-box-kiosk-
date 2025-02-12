@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderMenuDto {
-    private MenuDto menu;
+    private String id;
     private int quantity;
 }
