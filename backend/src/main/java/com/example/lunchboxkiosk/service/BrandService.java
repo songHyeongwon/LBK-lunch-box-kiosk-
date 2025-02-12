@@ -1,5 +1,7 @@
 package com.example.lunchboxkiosk.service;
 
+import com.example.lunchboxkiosk.common.exception.ErrorCode;
+import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.common.BrandDto;
 import com.example.lunchboxkiosk.repository.BrandRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +31,6 @@ public class BrandService {
         return brands.stream()
                 .filter(brand -> brandId.equals(brand.getId()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Brand with ID " + brandId + " not found."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.BRAND_NOT_FOUND, brandId));
     }
 }

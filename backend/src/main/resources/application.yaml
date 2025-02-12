@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  mvc:
+    log-resolved-exception: false
   data:
     redis:
       host: localhost

@@ -15,20 +15,20 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/brands")
+@RequestMapping("/api/brand")
 @RequiredArgsConstructor
 public class BrandController {
 
     private final BrandService brandService;
 
-    // 브랜드 목록 조회
+    // 전체 브랜드 목록 조회
     @GetMapping()
     public ResponseEntity<GetBrandsResponseDto> getBrands() {
         List<BrandDto> brands = brandService.getAllBrands();
 
         return ResponseEntity.ok(GetBrandsResponseDto.builder()
                 .status(HttpStatus.OK.value())
-                .message("success")
+                .message(HttpStatus.OK.name())
                 .brands(brands)
                 .build());
     }

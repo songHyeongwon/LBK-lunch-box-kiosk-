@@ -1,5 +1,7 @@
 package com.example.lunchboxkiosk.repository;
 
+import com.example.lunchboxkiosk.common.exception.ErrorCode;
+import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.common.BrandDto;
 import com.example.lunchboxkiosk.model.entity.Brand;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -21,17 +24,15 @@ public class BrandRepository {
 
     public List<Brand> findAll() {
         Set<String> keys = redisTemplate.keys("brand:*"); // 모든 브랜드 키를 가져옴
-        if (keys != null && !keys.isEmpty()) {
-            return keys.stream()
-                    .map(key -> {
-                        Object obj = redisTemplate.opsForValue().get(key);
-                        if (obj != null) {
-                            return objectMapper.convertValue(obj, Brand.class); // DTO로 변환
-                        }
-                        throw new RuntimeException("Redis value is null for key: " + key);
-                    })
-                    .toList();
+        if (keys == null || keys.isEmpty()) {
+            throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "No brand keys found in Redis.");
         }
-        throw new RuntimeException("No brand:* found in Redis.");
+
+        return keys.stream()
+                .map(key -> Optional.ofNullable(redisTemplate.opsForValue().get(key))
+                        .map(obj -> objectMapper.convertValue(obj, Brand.class))
+                        .orElseThrow(() -> new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, key))
+                )
+                .toList();
     }
 }

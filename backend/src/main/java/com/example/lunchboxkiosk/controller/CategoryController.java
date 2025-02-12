@@ -3,6 +3,7 @@ package com.example.lunchboxkiosk.controller;
 import com.example.lunchboxkiosk.model.dto.common.CategoryDetailDto;
 import com.example.lunchboxkiosk.model.dto.response.GetBrandCategoriesResponseDto;
 import com.example.lunchboxkiosk.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,20 +17,20 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/api/category")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // 브랜드 카테고리 목록 조회
+    // 브랜드 별 카테고리 목록 조회
     @GetMapping()
-    public ResponseEntity<GetBrandCategoriesResponseDto> getBrandCategories(@RequestParam(value = "brandId") String brandId) {
+    public ResponseEntity<GetBrandCategoriesResponseDto> getBrandCategories(@Valid @RequestParam(value = "brand_id") String brandId) {
         List<CategoryDetailDto> categories = categoryService.getCategoriesByBrandId(brandId);
 
         return ResponseEntity.ok(GetBrandCategoriesResponseDto.builder()
                 .status(HttpStatus.OK.value())
-                .message("success")
+                .message(HttpStatus.OK.name())
                 .categories(categories)
                 .build());
     }

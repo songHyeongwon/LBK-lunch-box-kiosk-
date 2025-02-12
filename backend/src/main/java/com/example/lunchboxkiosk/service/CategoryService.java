@@ -1,5 +1,7 @@
 package com.example.lunchboxkiosk.service;
 
+import com.example.lunchboxkiosk.common.exception.ErrorCode;
+import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.common.CategoryDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.CategoryDto;
 import com.example.lunchboxkiosk.repository.CategoryRepository;
@@ -23,7 +25,7 @@ public class CategoryService {
         String keyPattern = "category:*:" + categoryId;
         String key = redisUtilService.getKey(keyPattern);
         if (key == null) {
-            throw new IllegalArgumentException("categoryId: " + categoryId + " not found");
+            throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "null");
         }
 
         return categoryRepository.findCategoryById(key);
@@ -47,7 +49,7 @@ public class CategoryService {
         for (String key : keys) {
             String categoryId = extractCategoryIdFromKey(key);
             if (categoryId == null) {
-                continue;
+                throw new NotFoundException(ErrorCode.CATEGORY_NOT_FOUND, "null");
             }
 
             CategoryDto category = getCategoryById(categoryId);
