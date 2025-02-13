@@ -17,7 +17,7 @@ public class MailScheduler {
     @Scheduled(cron = "0 30 11 * * *")
     public void hsdMailingSchedule() {
         try {
-            mailService.sendHsdOrdersByEmail();
+            mailService.sendDateOrderInfoEmail();
         } catch (Exception e) {
             throw new RuntimeException("메일 발송 실패" + e.getMessage());
         }
