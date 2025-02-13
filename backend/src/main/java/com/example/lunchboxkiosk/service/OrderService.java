@@ -3,10 +3,7 @@ package com.example.lunchboxkiosk.service;
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.common.util.CodeGenerator;
-import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
-import com.example.lunchboxkiosk.model.dto.common.MenuDto;
-import com.example.lunchboxkiosk.model.dto.common.OrderDto;
-import com.example.lunchboxkiosk.model.dto.common.OrderMenuDto;
+import com.example.lunchboxkiosk.model.dto.common.*;
 import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
 import com.example.lunchboxkiosk.repository.OrderRepository;
@@ -16,8 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -58,6 +57,14 @@ public class OrderService {
         return orderRepository.findByKey(key);
     }
 
+    public List<OrderDto> getOrdersByKey(Set<String> keys) {
+        List<OrderDto> orderDtos = new ArrayList<>();
+        for (String key : keys) {
+            orderRepository.findByKey(key).ifPresent(orderDtos::add);
+        }
+        return orderDtos;
+    }
+
     public OrderDto updateOrder(UpdateOrderRequestDto params) {
         String key = params.getCreatedAt().format(DATE_FORMATTER) + ":" + params.getPhoneNumber() + ":" + params.getId();
 
@@ -79,9 +86,27 @@ public class OrderService {
         return key;
     }
 
-    public List<MenuDetailDto> getDetailOrderMenu(OrderDto orderDto) {
+    public Set<String> makeOrderKeys(String keyPattern) {
+        Set<String> keys = redisUtilService.getKeys(keyPattern);
+        if (keys == null || keys.isEmpty()) {
+            throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "No brand keys found in Redis.");
+        }
+
+        return keys;
+    }
+
+    public List<MenuDetailDto> getMenuDetailByOrderMenu(OrderDto orderDto) {
         return orderDto.getMenus().stream()
                 .map(orderMenu -> menuService.getMenuDetailById(orderMenu.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDetailDto> getMenuDetailsByOrderMenu(List<OrderDto> orderDtos) {
+        return orderDtos.stream()
+                .map(orderDto -> OrderDetailDto.builder()
+                        .order(orderDto)
+                        .menus(getMenuDetailByOrderMenu(orderDto))
+                        .build())
                 .collect(Collectors.toList());
     }
 }

@@ -7,12 +7,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=true)
-public class GetOrderResponseDto extends ResponseDto {
+public class GetOrdersByPhoneNumberResponseDto extends ResponseDto {
 
-    private OrderDetailDto orderDetail;
+    private List<OrderDetailDto> orderDetails;
 }

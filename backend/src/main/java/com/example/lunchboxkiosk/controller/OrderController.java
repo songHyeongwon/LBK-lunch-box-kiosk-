@@ -4,11 +4,13 @@ import com.example.lunchboxkiosk.common.exception.ErrorCode;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.common.util.CodeGenerator;
 import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
+import com.example.lunchboxkiosk.model.dto.common.OrderDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.response.CreateOrderResponseDto;
 import com.example.lunchboxkiosk.model.dto.response.GetOrderResponseDto;
+import com.example.lunchboxkiosk.model.dto.response.GetOrdersByPhoneNumberResponseDto;
 import com.example.lunchboxkiosk.model.dto.response.UpdateOrderResponseDto;
 import com.example.lunchboxkiosk.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -63,13 +67,30 @@ public class OrderController {
         OrderDto orderDto = orderService.getOrderByKey(key)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, key));
 
-        List<MenuDetailDto> menus = orderService.getDetailOrderMenu(orderDto);
+        List<MenuDetailDto> menuDetailDtos = orderService.getMenuDetailByOrderMenu(orderDto);
 
         return ResponseEntity.ok(GetOrderResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message(HttpStatus.OK.name())
-                .order(orderDto)
-                .menus(menus)
+                .orderDetail(OrderDetailDto.builder()
+                        .order(orderDto)
+                        .menus(menuDetailDtos)
+                        .build())
+                .build());
+    }
+
+    @Operation(summary = "사용자 별 주문 목록 조회")
+    @GetMapping()
+    public ResponseEntity<GetOrdersByPhoneNumberResponseDto> getOrdersByPhoneNumber(@RequestParam("phone_number") String phoneNumber) {
+        String keyPattern = "*:" + phoneNumber + ":*";
+        Set<String> keys = orderService.makeOrderKeys(keyPattern);
+        List<OrderDto> orderDtos = orderService.getOrdersByKey(keys);
+        List<OrderDetailDto> orderDetailDtos = orderService.getMenuDetailsByOrderMenu(orderDtos);
+
+        return ResponseEntity.ok(GetOrdersByPhoneNumberResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message(HttpStatus.OK.name())
+                .orderDetails(orderDetailDtos)
                 .build());
     }
 }
