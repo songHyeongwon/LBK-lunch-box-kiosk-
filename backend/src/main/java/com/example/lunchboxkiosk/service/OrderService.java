@@ -1,16 +1,15 @@
 package com.example.lunchboxkiosk.service;
 
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
-import com.example.lunchboxkiosk.common.exception.InvalidValueException;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.common.util.CodeGenerator;
+import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.MenuDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderMenuDto;
 import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
 import com.example.lunchboxkiosk.repository.OrderRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,6 +26,7 @@ import java.util.Optional;
 public class OrderService {
 
     private final MenuService menuService;
+    private final RedisUtilService redisUtilService;
     private final OrderRepository orderRepository;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -67,5 +68,20 @@ public class OrderService {
         orderDto.setUpdatedAt(LocalDateTime.now());
 
         return orderRepository.save(orderDto);
+    }
+
+    public String makeOrderKey(String keyPattern) {
+        String key = redisUtilService.getKey(keyPattern);
+        if (key == null) {
+            throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "null");
+        }
+
+        return key;
+    }
+
+    public List<MenuDetailDto> getDetailOrderMenu(OrderDto orderDto) {
+        return orderDto.getMenus().stream()
+                .map(orderMenu -> menuService.getMenuDetailById(orderMenu.getId()))
+                .collect(Collectors.toList());
     }
 }
