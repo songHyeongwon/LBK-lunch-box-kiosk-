@@ -7,8 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -16,5 +14,5 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=true)
 public class GetMenuResponseDto extends ResponseDto {
 
-    MenuDetailDto menu;
+    private MenuDetailDto menu;
 }

@@ -8,13 +8,11 @@ import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.DeleteOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
 import com.example.lunchboxkiosk.repository.OrderRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +27,6 @@ public class OrderService {
     private final MenuService menuService;
     private final RedisUtilService redisUtilService;
     private final OrderRepository orderRepository;
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     private int calculateTotalPrice(List<OrderMenuDto> menus) {
         return menus.stream()

@@ -92,7 +92,7 @@ public class OrderController {
             throw new InvalidValueException(ErrorCode.INVALID_VALUE, "'phone_number' and 'date' cannot be provided at the same time.");
         }
 
-        List<OrderDetailDto> orderDetailDtos = null;
+        List<OrderDetailDto> orderDetailDtos;
         if (phoneNumber != null) {
             String keyPattern = "*:" + phoneNumber + ":*";
             Set<String> keys = orderService.makeOrderKeys(keyPattern);
