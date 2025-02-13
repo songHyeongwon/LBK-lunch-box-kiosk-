@@ -36,4 +36,8 @@ public class OrderRepository {
         Object order = redisTemplate.opsForValue().get(key);
         return Optional.ofNullable(objectMapper.convertValue(order, OrderDto.class));
     }
+
+    public void deleteOrderByKey(String key) {
+        redisTemplate.delete(key);
+    }
 }

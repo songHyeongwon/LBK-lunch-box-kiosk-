@@ -5,8 +5,10 @@ import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.common.util.CodeGenerator;
 import com.example.lunchboxkiosk.model.dto.common.*;
 import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
+import com.example.lunchboxkiosk.model.dto.request.DeleteOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
 import com.example.lunchboxkiosk.repository.OrderRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,7 +68,8 @@ public class OrderService {
     }
 
     public OrderDto updateOrder(UpdateOrderRequestDto params) {
-        String key = params.getCreatedAt().format(DATE_FORMATTER) + ":" + params.getPhoneNumber() + ":" + params.getId();
+        String keyPattern = "*:" + params.getPhoneNumber() + ":" + params.getId();
+        String key = makeOrderKey(keyPattern);
 
         OrderDto orderDto = getOrderByKey(key)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, key));
@@ -108,5 +111,11 @@ public class OrderService {
                         .menus(getMenuDetailByOrderMenu(orderDto))
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public void deleteOrder(DeleteOrderRequestDto params) {
+        String keyPattern = "*:" + params.getPhoneNumber() + ":" + params.getId();
+        String key = makeOrderKey(keyPattern);
+        orderRepository.deleteOrderByKey(key);
     }
 }

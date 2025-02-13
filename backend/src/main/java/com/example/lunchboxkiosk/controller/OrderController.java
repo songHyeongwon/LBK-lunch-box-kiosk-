@@ -8,6 +8,7 @@ import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
+import com.example.lunchboxkiosk.model.dto.request.DeleteOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.response.*;
 import com.example.lunchboxkiosk.service.OrderService;
@@ -108,6 +109,18 @@ public class OrderController {
                 .status(HttpStatus.OK.value())
                 .message(HttpStatus.OK.name())
                 .orderDetails(orderDetailDtos)
+                .build());
+    }
+
+    @Operation(summary = "주문 삭제")
+    @DeleteMapping()
+    public ResponseEntity<DeleteOrderResponseDto> deleteOrder(@Valid @RequestBody DeleteOrderRequestDto params) {
+        CodeGenerator.validateIdFormat("O", params.getId());
+        orderService.deleteOrder(params);   // hard delete
+
+        return ResponseEntity.ok(DeleteOrderResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message(HttpStatus.OK.name())
                 .build());
     }
 }
