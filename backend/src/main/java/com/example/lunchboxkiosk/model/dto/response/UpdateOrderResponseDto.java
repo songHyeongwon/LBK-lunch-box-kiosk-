@@ -13,5 +13,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=true)
 public class UpdateOrderResponseDto extends ResponseDto {
+
     private OrderDto order;
 }

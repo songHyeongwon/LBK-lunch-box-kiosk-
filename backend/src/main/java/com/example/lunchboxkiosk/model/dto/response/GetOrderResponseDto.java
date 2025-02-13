@@ -1,7 +1,6 @@
 package com.example.lunchboxkiosk.model.dto.response;
 
 import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
-import com.example.lunchboxkiosk.model.dto.common.MenuDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=true)
 public class GetOrderResponseDto extends ResponseDto {
+
     private OrderDto order;
     private List<MenuDetailDto> menus;
 }

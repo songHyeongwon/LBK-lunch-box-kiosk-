@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CrawledMenuDataDto {
+
     private BrandDto brand;
     private List<CategoryDto> categories;
     private List<MenuDto> menus;

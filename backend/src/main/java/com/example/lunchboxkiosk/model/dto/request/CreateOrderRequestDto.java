@@ -3,7 +3,6 @@ package com.example.lunchboxkiosk.model.dto.request;
 import com.example.lunchboxkiosk.model.dto.common.OrderMenuDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,8 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateOrderRequestDto {
+
     @NotBlank
     private String phoneNumber;
+
     @NotEmpty
     private List<OrderMenuDto> menus;
 }

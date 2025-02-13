@@ -8,12 +8,12 @@ import java.util.regex.Pattern;
 
 public class CodeGenerator {
 
-    private static final Pattern ID_PATTERN = Pattern.compile("^[A-Z]-[a-z0-9]{30}$");
+    private static final Pattern ID_PATTERN = Pattern.compile("^[A-Z]-[a-z0-9]{12}$");
 
     public static String generateId(String prefix) {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         String prefixWithHyphen = prefix + "-";
-        int remainingLength = 32 - prefixWithHyphen.length();
+        int remainingLength = 14 - prefixWithHyphen.length();
 
         if (remainingLength < 0) {
             throw new InvalidValueException(ErrorCode.INVALID_VALUE, prefixWithHyphen);

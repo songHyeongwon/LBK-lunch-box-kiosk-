@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDto {
+
     private String id;
     private String phoneNumber;
     private List<OrderMenuDto> menus;

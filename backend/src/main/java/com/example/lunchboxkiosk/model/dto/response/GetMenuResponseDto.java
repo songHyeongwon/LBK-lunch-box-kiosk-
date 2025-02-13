@@ -1,7 +1,6 @@
 package com.example.lunchboxkiosk.model.dto.response;
 
 import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
-import com.example.lunchboxkiosk.model.dto.common.PageDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

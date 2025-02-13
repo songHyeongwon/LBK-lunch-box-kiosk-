@@ -3,7 +3,6 @@ package com.example.lunchboxkiosk.repository;
 import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import com.example.lunchboxkiosk.model.entity.Order;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

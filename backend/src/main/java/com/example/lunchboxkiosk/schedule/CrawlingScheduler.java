@@ -78,7 +78,8 @@ public class CrawlingScheduler {
             Process process = processBuilder.start();
             
             String processOutput = fetchProcessOutputAsString(process);
-            log.info("python output: {}", processOutput);
+            // log.info("python output: {}", processOutput);
+
             CrawledMenuDataDto crawledMenuDataDto = objectMapper.readValue(processOutput, CrawledMenuDataDto.class);
             BrandDto brand = crawledMenuDataDto.getBrand();
             List<CategoryDto> categories = crawledMenuDataDto.getCategories();
@@ -89,7 +90,7 @@ public class CrawlingScheduler {
 
             // 에러 발생 여부 체크
             checkProcessError(process);
-            log.info("hsdCrawlingSchedule success");
+            log.info("hsd crawling success");
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);

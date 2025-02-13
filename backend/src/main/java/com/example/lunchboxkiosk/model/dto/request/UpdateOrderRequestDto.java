@@ -1,6 +1,5 @@
 package com.example.lunchboxkiosk.model.dto.request;
 
-import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderMenuDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,12 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateOrderRequestDto {
+
     @NotBlank
     private String id;
+
     @NotBlank
     private String phoneNumber;
+
     @NotEmpty
     private List<OrderMenuDto> menus;
+    
     @NotNull
     private LocalDateTime createdAt;
 }
