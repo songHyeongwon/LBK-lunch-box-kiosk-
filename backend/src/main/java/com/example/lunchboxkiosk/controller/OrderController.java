@@ -1,6 +1,7 @@
 package com.example.lunchboxkiosk.controller;
 
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
+import com.example.lunchboxkiosk.common.exception.InvalidValueException;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.common.util.CodeGenerator;
 import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
@@ -8,10 +9,7 @@ import com.example.lunchboxkiosk.model.dto.common.OrderDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.OrderDto;
 import com.example.lunchboxkiosk.model.dto.request.CreateOrderRequestDto;
 import com.example.lunchboxkiosk.model.dto.request.UpdateOrderRequestDto;
-import com.example.lunchboxkiosk.model.dto.response.CreateOrderResponseDto;
-import com.example.lunchboxkiosk.model.dto.response.GetOrderResponseDto;
-import com.example.lunchboxkiosk.model.dto.response.GetOrdersByPhoneNumberResponseDto;
-import com.example.lunchboxkiosk.model.dto.response.UpdateOrderResponseDto;
+import com.example.lunchboxkiosk.model.dto.response.*;
 import com.example.lunchboxkiosk.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -21,7 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +31,8 @@ import java.util.Set;
 public class OrderController {
 
     private final OrderService orderService;
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Operation(summary = "주문 생성")
     @PostMapping()
@@ -78,16 +79,32 @@ public class OrderController {
                         .build())
                 .build());
     }
-
-    @Operation(summary = "사용자 별 주문 목록 조회")
+    
+    @Operation(summary = "주문 목록 조회: 연락처 또는 날짜")
     @GetMapping()
-    public ResponseEntity<GetOrdersByPhoneNumberResponseDto> getOrdersByPhoneNumber(@RequestParam("phone_number") String phoneNumber) {
-        String keyPattern = "*:" + phoneNumber + ":*";
-        Set<String> keys = orderService.makeOrderKeys(keyPattern);
-        List<OrderDto> orderDtos = orderService.getOrdersByKey(keys);
-        List<OrderDetailDto> orderDetailDtos = orderService.getMenuDetailsByOrderMenu(orderDtos);
+    public ResponseEntity<GetOrdersResponseDto> getOrders(@RequestParam(value = "phone_number", required = false) String phoneNumber,
+                                                          @RequestParam(value = "date", required = false) LocalDateTime date) {
+        if (phoneNumber == null && date == null) {
+            throw new InvalidValueException(ErrorCode.INVALID_VALUE, "One of 'phone_number' or 'date' is required.");
+        }
+        if (phoneNumber != null && date != null) {
+            throw new InvalidValueException(ErrorCode.INVALID_VALUE, "'phone_number' and 'date' cannot be provided at the same time.");
+        }
 
-        return ResponseEntity.ok(GetOrdersByPhoneNumberResponseDto.builder()
+        List<OrderDetailDto> orderDetailDtos = null;
+        if (phoneNumber != null) {
+            String keyPattern = "*:" + phoneNumber + ":*";
+            Set<String> keys = orderService.makeOrderKeys(keyPattern);
+            List<OrderDto> orderDtos = orderService.getOrdersByKey(keys);
+            orderDetailDtos = orderService.getMenuDetailsByOrderMenu(orderDtos);
+        } else {
+            String keyPattern = date.format(DATE_FORMATTER) + ":*";
+            Set<String> keys = orderService.makeOrderKeys(keyPattern);
+            List<OrderDto> orderDtos = orderService.getOrdersByKey(keys);
+            orderDetailDtos = orderService.getMenuDetailsByOrderMenu(orderDtos);
+        }
+
+        return ResponseEntity.ok(GetOrdersResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message(HttpStatus.OK.name())
                 .orderDetails(orderDetailDtos)

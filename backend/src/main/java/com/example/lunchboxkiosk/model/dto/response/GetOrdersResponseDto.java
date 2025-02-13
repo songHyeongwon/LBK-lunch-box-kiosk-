@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=true)
-public class GetOrdersByPhoneNumberResponseDto extends ResponseDto {
+public class GetOrdersResponseDto extends ResponseDto {
 
     private List<OrderDetailDto> orderDetails;
 }

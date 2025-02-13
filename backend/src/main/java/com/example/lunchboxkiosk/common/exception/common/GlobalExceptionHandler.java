@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
@@ -45,6 +46,13 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = ErrorCode.NOT_FOUND;
         errorCode.setMessage(e.getMessage());
         return buildErrorResponse(ErrorCode.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        ErrorCode errorCode = ErrorCode.BAD_REQUEST;
+        errorCode.setMessage(e.getMessage());
+        return buildErrorResponse(ErrorCode.BAD_REQUEST);
     }
 
     //    +------------------------------------------------------------------+

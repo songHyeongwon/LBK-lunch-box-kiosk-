@@ -89,7 +89,7 @@ public class OrderService {
     public Set<String> makeOrderKeys(String keyPattern) {
         Set<String> keys = redisUtilService.getKeys(keyPattern);
         if (keys == null || keys.isEmpty()) {
-            throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "No brand keys found in Redis.");
+            throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "No keys found in Redis.");
         }
 
         return keys;
