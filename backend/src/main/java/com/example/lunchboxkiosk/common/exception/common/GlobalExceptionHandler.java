@@ -2,6 +2,7 @@ package com.example.lunchboxkiosk.common.exception.common;
 
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
 import com.example.lunchboxkiosk.common.exception.InvalidValueException;
+import com.example.lunchboxkiosk.common.exception.MailSendException;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.response.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
@@ -58,4 +59,10 @@ public class GlobalExceptionHandler {
     //    +------------------------------------------------------------------+
     //    |                        5xx Server Errors                         |
     //    +------------------------------------------------------------------+
+    @ExceptionHandler(MailSendException.class)
+    public ResponseEntity<ErrorResponseDto> handleMailSendException(MailSendException e) {
+        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        errorCode.setMessage(e.getMessage());
+        return buildErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
 }

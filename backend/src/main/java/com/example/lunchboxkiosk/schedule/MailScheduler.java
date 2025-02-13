@@ -1,5 +1,7 @@
 package com.example.lunchboxkiosk.schedule;
 
+import com.example.lunchboxkiosk.common.exception.ErrorCode;
+import com.example.lunchboxkiosk.common.exception.MailSendException;
 import com.example.lunchboxkiosk.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +17,12 @@ public class MailScheduler {
 
 //    @Scheduled(fixedRate = 5000)
     @Scheduled(cron = "0 30 11 * * *")
-    public void hsdMailingSchedule() {
+    public void mailingSchedule() {
         try {
             mailService.sendDateOrderInfoEmail();
         } catch (Exception e) {
-            throw new RuntimeException("메일 발송 실패" + e.getMessage());
+            throw new MailSendException(ErrorCode.MAIL_SEND_FAILED);
         }
-        log.info("HSD order mail send success.");
+        log.info("Date order information email sent successfully.");
     }
 }

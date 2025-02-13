@@ -11,21 +11,20 @@ import java.text.MessageFormat;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    // 4XX COMMON
+    // 4XX
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "Bad Request."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized access."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden access."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found."),
     INVALID_VALUE(HttpStatus.BAD_REQUEST, "Invalid value. value: {0}"),
-
-    // 5XX COMMON
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error."),
-
-    // Custom
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "Menu not found with id: {0}"),
     BRAND_NOT_FOUND(HttpStatus.NOT_FOUND, "Brand not found with id: {0}"),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category not found with id: {0}"),
-    REDIS_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "Redis key not found. key(s): {0}");
+    REDIS_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "Redis key not found. key(s): {0}"),
+
+    // 5XX COMMON
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error."),
+    MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email.");
 
     private final HttpStatus httpStatus;
     private final String defaultMessage;
