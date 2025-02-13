@@ -16,6 +16,7 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Unauthorized access."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Forbidden access."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not found."),
+    INVALID_VALUE(HttpStatus.BAD_REQUEST, "Invalid value. value: {0}"),
 
     // 5XX COMMON
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error."),

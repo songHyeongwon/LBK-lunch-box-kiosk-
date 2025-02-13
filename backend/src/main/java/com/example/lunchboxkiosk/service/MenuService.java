@@ -3,8 +3,6 @@ package com.example.lunchboxkiosk.service;
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.common.*;
-import com.example.lunchboxkiosk.repository.BrandRepository;
-import com.example.lunchboxkiosk.repository.CategoryRepository;
 import com.example.lunchboxkiosk.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +27,7 @@ public class MenuService {
             throw new NotFoundException(ErrorCode.REDIS_KEY_NOT_FOUND, "null");
         }
 
-        return menuRepository.findById(key);
+        return menuRepository.findByKey(key);
     }
 
     public PageDto getPageInfo(String key, int page, int size) {

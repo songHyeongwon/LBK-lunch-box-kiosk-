@@ -39,7 +39,7 @@ public class MenuRepository {
         });
     }
 
-    public MenuDto findById(String key) {
+    public MenuDto findByKey(String key) {
         Object menuData = redisTemplate.opsForValue().get(key);
         return objectMapper.convertValue(menuData, MenuDto.class);
     }

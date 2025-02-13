@@ -1,6 +1,7 @@
 package com.example.lunchboxkiosk.common.exception.common;
 
 import com.example.lunchboxkiosk.common.exception.ErrorCode;
+import com.example.lunchboxkiosk.common.exception.InvalidValueException;
 import com.example.lunchboxkiosk.common.exception.NotFoundException;
 import com.example.lunchboxkiosk.model.dto.response.ErrorResponseDto;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
     //    +------------------------------------------------------------------+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleException(NotFoundException e) {
+        return buildErrorResponse(e.getErrorCode());
+    }
+
+    @ExceptionHandler(InvalidValueException.class)
+    public ResponseEntity<ErrorResponseDto> handleException(InvalidValueException e) {
         return buildErrorResponse(e.getErrorCode());
     }
 

@@ -1,5 +1,6 @@
 package com.example.lunchboxkiosk.controller;
 
+import com.example.lunchboxkiosk.common.util.CodeGenerator;
 import com.example.lunchboxkiosk.model.dto.common.CategoryDetailDto;
 import com.example.lunchboxkiosk.model.dto.response.GetBrandCategoriesResponseDto;
 import com.example.lunchboxkiosk.service.CategoryService;
@@ -27,6 +28,7 @@ public class CategoryController {
     @Operation(summary = "브랜드 별 카테고리 목록 조회")
     @GetMapping()
     public ResponseEntity<GetBrandCategoriesResponseDto> getBrandCategories(@Valid @RequestParam(value = "brand_id") String brandId) {
+        CodeGenerator.validateIdFormat("B", brandId);
         List<CategoryDetailDto> categories = categoryService.getCategoriesByBrandId(brandId);
 
         return ResponseEntity.ok(GetBrandCategoriesResponseDto.builder()

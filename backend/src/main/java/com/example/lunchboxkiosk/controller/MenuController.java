@@ -1,5 +1,6 @@
 package com.example.lunchboxkiosk.controller;
 
+import com.example.lunchboxkiosk.common.util.CodeGenerator;
 import com.example.lunchboxkiosk.model.dto.common.MenuDetailDto;
 import com.example.lunchboxkiosk.model.dto.common.PageDto;
 import com.example.lunchboxkiosk.model.dto.response.GetBrandCategoryMenusResponseDto;
@@ -45,6 +46,7 @@ public class MenuController {
     public ResponseEntity<GetBrandMenusResponseDto> getBrandMenus(@PathVariable(name = "brand_id") String brandId,
                                                                   @RequestParam(value = "page", defaultValue = "1") int page,
                                                                   @RequestParam(value = "size", defaultValue = "20") int size) {
+        CodeGenerator.validateIdFormat("B", brandId);
         String key = "search:brand:" + brandId + ":category:all:menu:all";
         List<MenuDetailDto> menus = menuService.getMenusByBrandId(key, page, size);
         PageDto pageInfo = menuService.getPageInfo(key, page, size);
@@ -63,6 +65,8 @@ public class MenuController {
                                                                                   @PathVariable(name = "category_id") String categoryId,
                                                                                   @RequestParam(value = "page", defaultValue = "1") int page,
                                                                                   @RequestParam(value = "size", defaultValue = "20") int size) {
+        CodeGenerator.validateIdFormat("B", brandId);
+        CodeGenerator.validateIdFormat("C", categoryId);
         String keyPattern = "search:brand:" + brandId + ":category:" + categoryId + ":*";
         String key = menuService.getKeyFromPattern(keyPattern);
         List<MenuDetailDto> menus = menuService.getMenusByBrandIdAndCategoryId(key, page, size);
@@ -79,6 +83,7 @@ public class MenuController {
     @Operation(summary = "메뉴 상세 조회")
     @GetMapping("/detail/{menu_id}")
     public ResponseEntity<GetMenuResponseDto> getMenu(@PathVariable(name = "menu_id") String menuId) {
+        CodeGenerator.validateIdFormat("M", menuId);
         MenuDetailDto menu = menuService.getMenuDetailById(menuId);
 
         return ResponseEntity.ok(GetMenuResponseDto.builder()
