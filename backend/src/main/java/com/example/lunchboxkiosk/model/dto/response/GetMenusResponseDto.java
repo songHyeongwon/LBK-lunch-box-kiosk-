@@ -17,6 +17,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=true)
 public class GetMenusResponseDto extends ResponseDto {
 
-    List<MenuDetailDto> menus;
-    PageDto page;
+    private List<MenuDetailDto> menus;
+    private PageDto page;
 }

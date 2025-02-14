@@ -16,5 +16,5 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=true)
 public class GetBrandCategoriesResponseDto extends ResponseDto {
 
-    List<CategoryDetailDto> categories;
+    private List<CategoryDetailDto> categories;
 }
