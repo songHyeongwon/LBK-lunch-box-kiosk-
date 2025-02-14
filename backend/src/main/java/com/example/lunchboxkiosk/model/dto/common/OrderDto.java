@@ -15,7 +15,7 @@ import java.util.List;
 public class OrderDto {
 
     private String id;
-    private String phoneNumber;
+    private String email;
     private List<OrderMenuDto> menus;
     private int totalPrice;
     private LocalDateTime createdAt;

@@ -26,7 +26,7 @@ public class OrderRepository {
 
     public OrderDto save(OrderDto orderDto) {
         Order order = modelMapper.map(orderDto, Order.class);
-        String key = order.getCreatedAt().format(DATE_FORMATTER) + ":" + order.getPhoneNumber() + ":" + order.getId();
+        String key = order.getCreatedAt().format(DATE_FORMATTER) + ":" + order.getEmail() + ":" + order.getId();
         redisTemplate.opsForValue().set(key, order, 7, TimeUnit.DAYS);
 
         return modelMapper.map(order, OrderDto.class);

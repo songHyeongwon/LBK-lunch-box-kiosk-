@@ -1,6 +1,7 @@
 package com.example.lunchboxkiosk.model.dto.request;
 
 import com.example.lunchboxkiosk.model.dto.common.OrderMenuDto;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -16,8 +17,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateOrderRequestDto {
 
+    @Email
     @NotBlank
-    private String phoneNumber;
+    private String email;
 
     @NotEmpty
     private List<OrderMenuDto> menus;

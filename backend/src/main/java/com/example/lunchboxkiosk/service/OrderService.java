@@ -41,7 +41,7 @@ public class OrderService {
         String orderId = CodeGenerator.generateId("O");
         OrderDto orderDto = OrderDto.builder()
                 .id(orderId)
-                .phoneNumber(params.getPhoneNumber())
+                .email(params.getEmail())
                 .menus(params.getMenus())
                 .totalPrice(calculateTotalPrice(params.getMenus()))
                 .createdAt(LocalDateTime.now())
@@ -64,7 +64,7 @@ public class OrderService {
     }
 
     public OrderDto updateOrder(UpdateOrderRequestDto params) {
-        String keyPattern = "*:" + params.getPhoneNumber() + ":" + params.getId();
+        String keyPattern = "*:" + params.getEmail() + ":" + params.getId();
         String key = makeOrderKey(keyPattern);
 
         OrderDto orderDto = getOrderByKey(key)
@@ -110,7 +110,7 @@ public class OrderService {
     }
 
     public void deleteOrder(DeleteOrderRequestDto params) {
-        String keyPattern = "*:" + params.getPhoneNumber() + ":" + params.getId();
+        String keyPattern = "*:" + params.getEmail() + ":" + params.getId();
         String key = makeOrderKey(keyPattern);
         orderRepository.deleteOrderByKey(key);
     }

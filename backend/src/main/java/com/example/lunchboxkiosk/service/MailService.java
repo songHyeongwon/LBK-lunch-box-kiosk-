@@ -64,7 +64,7 @@ public class MailService {
             OrderDto order = orderDetail.getOrder();
             List<MenuDetailDto> menus = orderDetail.getMenus();
 
-            String phoneNumber = order.getPhoneNumber();
+            String email = order.getEmail();
             StringBuilder menuNames = new StringBuilder();
             int totalQuantity = 0;
             int totalPrice = order.getTotalPrice();
@@ -89,7 +89,7 @@ public class MailService {
             dateTotalPrice.addAndGet(totalPrice);
 
             content.append("<tr>");
-            content.append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(phoneNumber).append("</td>");
+            content.append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(email).append("</td>");
             content.append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(menuNames).append("</td>");
             content.append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(totalQuantity).append("</td>");
             content.append("<td style='padding: 8px; border: 1px solid #ddd;'>").append(totalPrice).append("</td>");

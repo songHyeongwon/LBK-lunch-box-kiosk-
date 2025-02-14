@@ -13,7 +13,7 @@ import java.util.List;
 public class Order {
 
     private String id;
-    private String phoneNumber;
+    private String email;
     private List<OrderMenu> menus;
     private int totalPrice;
     private LocalDateTime createdAt;

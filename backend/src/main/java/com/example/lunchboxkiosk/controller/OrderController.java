@@ -83,18 +83,18 @@ public class OrderController {
     
     @Operation(summary = "주문 목록 조회: 연락처 또는 날짜")
     @GetMapping()
-    public ResponseEntity<GetOrdersResponseDto> getOrders(@RequestParam(value = "phone_number", required = false) String phoneNumber,
+    public ResponseEntity<GetOrdersResponseDto> getOrders(@RequestParam(value = "email", required = false) String email,
                                                           @RequestParam(value = "date", required = false) LocalDateTime date) {
-        if (phoneNumber == null && date == null) {
-            throw new InvalidValueException(ErrorCode.INVALID_VALUE, "One of 'phone_number' or 'date' is required.");
+        if (email == null && date == null) {
+            throw new InvalidValueException(ErrorCode.INVALID_VALUE, "One of 'email' or 'date' is required.");
         }
-        if (phoneNumber != null && date != null) {
-            throw new InvalidValueException(ErrorCode.INVALID_VALUE, "'phone_number' and 'date' cannot be provided at the same time.");
+        if (email != null && date != null) {
+            throw new InvalidValueException(ErrorCode.INVALID_VALUE, "'email' and 'date' cannot be provided at the same time.");
         }
 
         List<OrderDetailDto> orderDetailDtos;
-        if (phoneNumber != null) {
-            String keyPattern = "*:" + phoneNumber + ":*";
+        if (email != null) {
+            String keyPattern = "*:" + email + ":*";
             Set<String> keys = orderService.makeOrderKeys(keyPattern);
             List<OrderDto> orderDtos = orderService.getOrdersByKey(keys);
             orderDetailDtos = orderService.getMenuDetailsByOrderMenu(orderDtos);
