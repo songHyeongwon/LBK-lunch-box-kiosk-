@@ -53,7 +53,6 @@ public class CrawlingScheduler {
         return jsonOutput.toString();
     }
 
-
     private void checkProcessError(Process process) throws IOException, InterruptedException {
         BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         String line;
@@ -67,10 +66,8 @@ public class CrawlingScheduler {
         }
     }
 
-//    @Scheduled(fixedRate = 5000)            // 5초마다 실행
-//    @Scheduled(cron = "0 */10 * * * *")     // 10분마다 실행
     @Scheduled(cron = "0 0 10 * * *")       // 매일 오전 10시 실행
-    public void hsdCrawlingSchedule() {
+    public void crawlingSchedule() {
         try {
             // 프로세스 실행
             String script = getScriptPath(HSD_CRAWLER_SCRIPT);
@@ -78,7 +75,6 @@ public class CrawlingScheduler {
             Process process = processBuilder.start();
             
             String processOutput = fetchProcessOutputAsString(process);
-            // log.info("python output: {}", processOutput);
 
             CrawledMenuDataDto crawledMenuDataDto = objectMapper.readValue(processOutput, CrawledMenuDataDto.class);
             BrandDto brand = crawledMenuDataDto.getBrand();
@@ -90,10 +86,15 @@ public class CrawlingScheduler {
 
             // 에러 발생 여부 체크
             checkProcessError(process);
-            log.info("hsd crawling success");
+            log.info("crawling success");
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    // 크롤링 직접 호출 - 디버깅
+    public void runCrawling() {
+        crawlingSchedule();
     }
 }

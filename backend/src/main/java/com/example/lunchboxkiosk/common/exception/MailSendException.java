@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class MailSendException extends CustomException {
+
   public MailSendException(ErrorCode errorCode, String... args) {
     super(errorCode, args);
   }
