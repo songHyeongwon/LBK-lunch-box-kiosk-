@@ -4,6 +4,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   Typography,
 } from "@mui/material";
@@ -30,33 +31,33 @@ const SideBar = () => {
       <Box sx={{ overflow: "auto", mt: 8 }}>
         <List>
           {menuItems.map((text) => (
-            <ListItem
-              button
-              key={text}
-              onClick={() => setSelectedItem(text)}
-              sx={{
-                py: 2,
-                backgroundColor:
-                  selectedItem === text
-                    ? "rgba(255, 255, 255, 0.08)"
-                    : "transparent",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.12)",
-                },
-              }}
-            >
-              <ListItemText
-                primary={
-                  <Typography
-                    sx={{
-                      fontWeight: selectedItem === text ? "bold" : "normal",
-                      color: selectedItem === text ? "#ffffff" : "#9e9e9e",
-                    }}
-                  >
-                    {text}
-                  </Typography>
-                }
-              />
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                onClick={() => setSelectedItem(text)}
+                sx={{
+                  py: 2,
+                  backgroundColor:
+                    selectedItem === text
+                      ? "rgba(255, 255, 255, 0.08)"
+                      : "transparent",
+                  "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.12)",
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={
+                    <Typography
+                      sx={{
+                        fontWeight: selectedItem === text ? "bold" : "normal",
+                        color: selectedItem === text ? "#ffffff" : "#9e9e9e",
+                      }}
+                    >
+                      {text}
+                    </Typography>
+                  }
+                />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>

@@ -6,7 +6,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    if (email.trim() === "") {
+    if (email === "") {
       alert("이메일을 입력해주세요.");
       return;
     }

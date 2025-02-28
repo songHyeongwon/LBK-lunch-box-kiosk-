@@ -15,6 +15,7 @@ function App() {
           <Route path="/" element={<Login />} />
           {/* LunchboxMenu 화면 */}
           <Route path="/home" element={<LunchboxMenu />} />
+          {/* TODO::Error 화면 */}
         </Routes>
       </Router>
     </ThemeProvider>
