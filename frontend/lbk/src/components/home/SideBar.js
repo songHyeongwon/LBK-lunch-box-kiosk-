@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Drawer,
@@ -8,11 +8,34 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import Api from "../../hooks/api";
 
-const SideBar = () => {
-  const [selectedItem, setSelectedItem] = useState("본도시락");
+const SideBar = ({ onSelect }) => {
+  const [menuItems, setMenuItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  const menuItems = ["본도시락", "추가예정..."];
+  useEffect(() => {
+    getBrandList();
+  }, []);
+
+  const getBrandList = async () => {
+    try {
+      const response = await Api.get("/api/brand");
+      const data = await response.brands;
+      setMenuItems(data);
+      if (data.length > 0) {
+        setSelectedItem(data[0].id);
+        onSelect(data[0].id); // 초기 상태 전달
+      }
+    } catch (error) {
+      console.error("Error getting brandList:", error);
+    }
+  };
+
+  const handleItemClick = (id) => {
+    setSelectedItem(id);
+    onSelect(id);
+  };
 
   return (
     <Drawer
@@ -30,14 +53,14 @@ const SideBar = () => {
     >
       <Box sx={{ overflow: "auto", mt: 8 }}>
         <List>
-          {menuItems.map((text) => (
-            <ListItem key={text} disablePadding>
+          {menuItems.map((item) => (
+            <ListItem key={item.id} disablePadding>
               <ListItemButton
-                onClick={() => setSelectedItem(text)}
+                onClick={() => handleItemClick(item.id)}
                 sx={{
                   py: 2,
                   backgroundColor:
-                    selectedItem === text
+                    selectedItem === item.id
                       ? "rgba(255, 255, 255, 0.08)"
                       : "transparent",
                   "&:hover": {
@@ -49,11 +72,12 @@ const SideBar = () => {
                   primary={
                     <Typography
                       sx={{
-                        fontWeight: selectedItem === text ? "bold" : "normal",
-                        color: selectedItem === text ? "#ffffff" : "#9e9e9e",
+                        fontWeight:
+                          selectedItem === item.id ? "bold" : "normal",
+                        color: selectedItem === item.id ? "#ffffff" : "#9e9e9e",
                       }}
                     >
-                      {text}
+                      {item.name}
                     </Typography>
                   }
                 />

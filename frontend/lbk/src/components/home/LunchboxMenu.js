@@ -13,6 +13,7 @@ const LunchboxMenu = () => {
   const [cartItems, setCartItems] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email;
@@ -162,6 +163,11 @@ const LunchboxMenu = () => {
     handleModalOpen("success");
   };
 
+  const handleSelectItem = (itemId) => {
+    setSelectedItem(itemId);
+    console.log("Selected Item in Parent:", itemId);
+  };
+
   return (
     <>
       <Box
@@ -174,7 +180,7 @@ const LunchboxMenu = () => {
       >
         <TopBar email={email} />
         <Box sx={{ display: "flex", flexGrow: 1, overflow: "auto" }}>
-          <SideBar />
+          <SideBar onSelect={handleSelectItem} />
           <Box
             component="main"
             sx={{
