@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Modal,
@@ -8,31 +8,32 @@ import {
   List,
   ListItem,
   Stack,
+  Divider,
 } from "@mui/material";
+import Api from "../../hooks/api";
 
 const OrderDetailModal = ({ open, onClose, onConfirm, email }) => {
-  const orderItems = [
-    {
-      title: "[10일, 수] 수작도시락 구매상품",
-      price: 9000,
-      quantity: 3,
-    },
-    {
-      title: "든든도시락(언양불고기덮밥)",
-      price: 8000,
-      quantity: 3,
-    },
-  ];
+  const [orders, setOrders] = useState([]);
 
-  const totalAmount = orderItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  useEffect(() => {
+    if (open && email) {
+      getOrder(email);
+    }
+  }, [open, email]);
 
-  const onDeleteOrders = () => {
-    // 주문 처리 로직 구현
-    console.log("주문 내역 삭제");
-    onConfirm();
+  const getOrder = async (email) => {
+    try {
+      const response = await Api.get(`/api/order?email=${email}`);
+      const data = response.order_details; // assuming the data is returned directly
+      setOrders(data);
+    } catch (error) {
+      console.error("Error getting order list:", error);
+    }
+  };
+
+  const onDeleteOrders = (orderId) => {
+    console.log(orderId);
+    onConfirm(orderId);
   };
 
   return (
@@ -43,45 +44,86 @@ const OrderDetailModal = ({ open, onClose, onConfirm, email }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 360,
+          width: 400,
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 3,
           borderRadius: "8px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          maxHeight: "80vh",
+          overflowY: "auto",
         }}
       >
         <Typography variant="h6" fontWeight="bold" sx={{ mb: 2 }}>
           주문 내역 확인
         </Typography>
 
-        <List sx={{ width: "100%", maxHeight: 200, overflowY: "auto" }}>
-          {orderItems.map((item, index) => (
-            <ListItem
-              key={index}
-              sx={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <Typography variant="body2">
-                {item.title} x {item.quantity}
-              </Typography>
-              <Typography variant="body2">
-                {(item.price * item.quantity).toLocaleString()}원
-              </Typography>
-            </ListItem>
-          ))}
-        </List>
+        {orders.length === 0 ? (
+          <Typography>주문 내역이 없습니다.</Typography>
+        ) : (
+          orders.map((orderBlock, orderIndex) => {
+            const { order, menus } = orderBlock;
 
-        <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
-          총 주문금액: {totalAmount.toLocaleString()}원
-        </Typography>
+            // id -> quantity 매핑
+            const quantityMap = {};
+            order.menus.forEach((m) => {
+              quantityMap[m.id] = m.quantity;
+            });
 
-        {/* 주문 내역 삭제 및 닫기 버튼 */}
-        <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-          <Button variant="outlined" color="error" onClick={onDeleteOrders}>
-            주문 내역 삭제
-          </Button>
+            return (
+              <Box key={order.id} sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  주문일시: {new Date(order.created_at).toLocaleString()}
+                </Typography>
+                <List sx={{ width: "100%" }}>
+                  {menus.map((menuData, idx) => {
+                    const menu = menuData.menu;
+                    const quantity = quantityMap[menu.id] || 1;
+                    return (
+                      <ListItem
+                        key={menu.id}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          py: 0.5,
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {menu.name} x {quantity}
+                        </Typography>
+                        <Typography variant="body2">
+                          {(menu.price * quantity).toLocaleString()}원
+                        </Typography>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  sx={{ mt: 1, textAlign: "right" }}
+                >
+                  총 주문금액: {order.total_price.toLocaleString()}원
+                </Typography>
+                <Button
+                  variant="text"
+                  color="error"
+                  size="small"
+                  onClick={() => onDeleteOrders(order.id)}
+                  sx={{ mt: 1 }}
+                >
+                  이 주문 삭제
+                </Button>
+                {orderIndex < orders.length - 1 && <Divider sx={{ my: 2 }} />}
+              </Box>
+            );
+          })
+        )}
+
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ mt: 2, justifyContent: "center" }}
+        >
           <Button variant="contained" onClick={onClose}>
             닫기
           </Button>
@@ -91,18 +133,11 @@ const OrderDetailModal = ({ open, onClose, onConfirm, email }) => {
   );
 };
 
-// PropTypes 검증
 OrderDetailModal.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  orderItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      quantity: PropTypes.number.isRequired,
-      price: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-  onDeleteOrders: PropTypes.func.isRequired, // 주문 내역 삭제 함수
+  onConfirm: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired,
 };
 
 export default OrderDetailModal;

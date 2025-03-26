@@ -31,9 +31,9 @@ const Api = {
     }
   },
 
-  delete: async (url) => {
+  delete: async (url, dataObj) => {
     try {
-      const response = await api.delete(url);
+      const response = await api.delete(url, { data: dataObj });
       return response.data;
     } catch (error) {
       console.error(`DELETE ${url} failed:`, error);

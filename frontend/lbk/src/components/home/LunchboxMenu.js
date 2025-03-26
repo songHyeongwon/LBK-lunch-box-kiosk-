@@ -52,7 +52,7 @@ const LunchboxMenu = () => {
   const handleAddToCart = (item) => {
     setCartItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
-        (cartItem) => cartItem.title === item.title
+        (cartItem) => cartItem.name === item.name
       );
 
       if (existingItemIndex >= 0) {
@@ -88,11 +88,31 @@ const LunchboxMenu = () => {
     });
   };
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     // 주문 처리 로직 구현
     console.log(email);
     console.log("주문 처리:", cartItems);
-    handleModalOpen("success");
+    try {
+      const filteredCartItems = cartItems.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+      }));
+      const data = {
+        email: email,
+        menus: filteredCartItems,
+      };
+
+      const response = await Api.post(`/api/order`, JSON.stringify(data));
+
+      if (response.status === 200) {
+        handleModalOpen("success");
+      } else {
+        handleModalOpen("fail");
+      }
+    } catch (error) {
+      console.error("Error getting category list:", error);
+      handleModalOpen("fail");
+    }
   };
 
   const handleSelectBrand = (brandId) => {

@@ -87,7 +87,7 @@ const Cart = ({ cartItems, onRemoveItem, onOrder, onUpdateQuantity }) => {
                 }}
               >
                 <Typography variant="body2" noWrap>
-                  {item.title}
+                  {item.name}
                 </Typography>
 
                 <Stack

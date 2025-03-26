@@ -2,25 +2,47 @@ import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import OrderDetailModal from "../common/OrderDetailModal";
 import CustomModal from "../common/CustomModal";
+import Api from "../../hooks/api";
 
 const TopBar = ({ email }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [confimModalOpen, setConfimModalOpen] = useState(false);
   const [resultModalOpen, setResultModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState("");
+  const [deleteOrderId, setDeleteOrderId] = useState(null);
 
   const handleModalOpen = () => {
     setModalOpen(true);
   };
 
-  const handleConfimModalOpen = () => {
+  const handleConfimModalOpen = (orderId) => {
+    setDeleteOrderId(orderId);
     setModalOpen(false);
     setConfimModalOpen(true);
   };
 
-  const handleResultModalOpen = () => {
+  const handleResultModalOpen = async () => {
+    try {
+      if (deleteOrderId === null) return;
+      const data = {
+        id: deleteOrderId,
+        email: email,
+      };
+      const response = await Api.delete(`/api/order`, JSON.stringify(data));
+      if (response.status === 200) {
+        handleResultAction("success");
+      } else {
+        handleResultAction("fail");
+      }
+    } catch (error) {
+      console.error("Error getting order list:", error);
+      handleResultAction("fail");
+    }
+  };
+
+  const handleResultAction = (actionType) => {
     setConfimModalOpen(false);
-    setModalAction("success");
+    setModalAction(actionType);
     setResultModalOpen(true);
   };
 
@@ -84,7 +106,8 @@ const TopBar = ({ email }) => {
       <OrderDetailModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onConfirm={() => handleConfimModalOpen()}
+        onConfirm={handleConfimModalOpen}
+        email={email}
       />
       {/* confimModal 컴포넌트 */}
       <CustomModal
