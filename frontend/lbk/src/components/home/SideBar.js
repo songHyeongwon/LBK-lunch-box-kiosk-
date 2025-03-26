@@ -10,22 +10,23 @@ import {
 } from "@mui/material";
 import Api from "../../hooks/api";
 
-const SideBar = ({ onSelect }) => {
-  const [menuItems, setMenuItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
+const SideBar = ({ onSelectBrand }) => {
+  const [brandItems, setBrandItems] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState(null);
 
   useEffect(() => {
     getBrandList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getBrandList = async () => {
     try {
       const response = await Api.get("/api/brand");
       const data = await response.brands;
-      setMenuItems(data);
+      setBrandItems(data);
       if (data.length > 0) {
-        setSelectedItem(data[0].id);
-        onSelect(data[0].id); // 초기 상태 전달
+        setSelectedBrand(data[0].id);
+        onSelectBrand(data[0].id); // 초기 상태 전달
       }
     } catch (error) {
       console.error("Error getting brandList:", error);
@@ -33,8 +34,8 @@ const SideBar = ({ onSelect }) => {
   };
 
   const handleItemClick = (id) => {
-    setSelectedItem(id);
-    onSelect(id);
+    setSelectedBrand(id);
+    onSelectBrand(id);
   };
 
   return (
@@ -53,14 +54,14 @@ const SideBar = ({ onSelect }) => {
     >
       <Box sx={{ overflow: "auto", mt: 8 }}>
         <List>
-          {menuItems.map((item) => (
+          {brandItems.map((item) => (
             <ListItem key={item.id} disablePadding>
               <ListItemButton
                 onClick={() => handleItemClick(item.id)}
                 sx={{
                   py: 2,
                   backgroundColor:
-                    selectedItem === item.id
+                    selectedBrand === item.id
                       ? "rgba(255, 255, 255, 0.08)"
                       : "transparent",
                   "&:hover": {
@@ -73,8 +74,9 @@ const SideBar = ({ onSelect }) => {
                     <Typography
                       sx={{
                         fontWeight:
-                          selectedItem === item.id ? "bold" : "normal",
-                        color: selectedItem === item.id ? "#ffffff" : "#9e9e9e",
+                          selectedBrand === item.id ? "bold" : "normal",
+                        color:
+                          selectedBrand === item.id ? "#ffffff" : "#9e9e9e",
                       }}
                     >
                       {item.name}

@@ -5,11 +5,10 @@ import {
   CardContent,
   Typography,
   Box,
-  Chip,
   Button,
 } from "@mui/material";
 
-const MenuItem = ({ image, title, price, isNew, onAddToCart }) => (
+const MenuItem = ({ image_url, name, price, onAddToCart }) => (
   <Card
     sx={{
       width: "100%",
@@ -24,28 +23,16 @@ const MenuItem = ({ image, title, price, isNew, onAddToCart }) => (
         sx={{
           width: 260,
           height: 260,
-          objectFit: "cover",
+          objectFit: "contain",
           margin: "0 auto",
         }}
-        image={image}
-        alt={title}
+        image={image_url}
+        alt={name}
       />
-      {isNew && (
-        <Chip
-          label="NEW"
-          color="primary"
-          sx={{
-            position: "absolute",
-            top: 10,
-            left: 10,
-            backgroundColor: "#8bc34a",
-          }}
-        />
-      )}
     </Box>
     <CardContent>
       <Typography gutterBottom variant="body1" component="h2" fontWeight="bold">
-        {title}
+        {name}
       </Typography>
       <Box
         sx={{

@@ -6,92 +6,19 @@ import MenuBar from "./MenuBar";
 import SideBar from "./SideBar";
 import TopBar from "./TopBar";
 import Cart from "./Cart";
-import lunchbox1 from "../../assets/images/test.jpg";
 import CustomModal from "../common/CustomModal";
+import Api from "../../hooks/api";
 
 const LunchboxMenu = () => {
   const [cartItems, setCartItems] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedMenu, setSelectedMenu] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email;
-
-  const menuItems = [
-    {
-      image: lunchbox1,
-      title: "[10일, 수] 수작도시락 구매상품",
-      price: 9000,
-      isNew: false,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(언양불고기덮밥)",
-      price: 8000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(카츠&된장)",
-      price: 8000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(치킨너겟&쌀밥)",
-      price: 9000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "[10일, 수] 수작도시락 구매상품",
-      price: 9000,
-      isNew: false,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(언양불고기덮밥)",
-      price: 8000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(카츠&된장)",
-      price: 8000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(치킨너겟&쌀밥)",
-      price: 9000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "[10일, 수] 수작도시락 구매상품",
-      price: 9000,
-      isNew: false,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(언양불고기덮밥)",
-      price: 8000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(카츠&된장)",
-      price: 8000,
-      isNew: true,
-    },
-    {
-      image: lunchbox1,
-      title: "든든도시락(치킨너겟&쌀밥)",
-      price: 9000,
-      isNew: true,
-    },
-  ];
 
   useEffect(() => {
     if (email === "" || email === null || email === undefined) {
@@ -99,6 +26,11 @@ const LunchboxMenu = () => {
       return;
     }
   });
+
+  useEffect(() => {
+    getMenuItemList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMenu]);
 
   const handleModalOpen = (actionType) => {
     setModalAction(actionType);
@@ -163,9 +95,28 @@ const LunchboxMenu = () => {
     handleModalOpen("success");
   };
 
-  const handleSelectItem = (itemId) => {
-    setSelectedItem(itemId);
-    console.log("Selected Item in Parent:", itemId);
+  const handleSelectBrand = (brandId) => {
+    setSelectedBrand(brandId);
+    console.log("Selected Brand:", brandId);
+  };
+
+  const handleSelectMenu = (menuId) => {
+    setSelectedMenu(menuId);
+    console.log("Selected Menu:", menuId);
+  };
+
+  const getMenuItemList = async () => {
+    try {
+      if (selectedBrand === null || selectedMenu === null) return;
+
+      const response = await Api.get(
+        `/api/menu/${selectedBrand}/${selectedMenu}?page=1&size=100`
+      );
+      const data = response.menus;
+      setMenuItems(data);
+    } catch (error) {
+      console.error("Error getting category list:", error);
+    }
   };
 
   return (
@@ -180,7 +131,7 @@ const LunchboxMenu = () => {
       >
         <TopBar email={email} />
         <Box sx={{ display: "flex", flexGrow: 1, overflow: "auto" }}>
-          <SideBar onSelect={handleSelectItem} />
+          <SideBar onSelectBrand={handleSelectBrand} />
           <Box
             component="main"
             sx={{
@@ -193,13 +144,16 @@ const LunchboxMenu = () => {
             }}
           >
             <Container>
-              <MenuBar />
+              <MenuBar
+                brandId={selectedBrand}
+                onSelectMenu={handleSelectMenu}
+              />
               <Grid container spacing={5}>
                 {menuItems.map((item, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
                     <MenuItem
-                      {...item}
-                      onAddToCart={() => handleAddToCart(item)}
+                      {...item.menu}
+                      onAddToCart={() => handleAddToCart(item.menu)}
                     />
                   </Grid>
                 ))}
