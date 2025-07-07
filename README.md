@@ -1,4 +1,4 @@
-# LBK-lunch-box-kiosk-
+# LBK-lunch-box-kiosk
 LBK(lunch box kiosk)
 
 # React, Spring Boot, Redis Docker Compose Setup
